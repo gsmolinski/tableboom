@@ -12,24 +12,29 @@
 #' - line2 - line where expr ends
 #' - fun - name of function (with namespace) to use on the expr,
 #' currently `boomer::boom` or `dplyr::glimpse`.
+#' OR NULL if nrow == 0 from `utils::getParseData()`.
 #' @importFrom rlang .data
 #' @noRd
 find_exprs <- function(parse_data) {
-  var_calls <- find_var_calls(parse_data)
+  if (nrow(parse_data) > 0) {
+    var_calls <- find_var_calls(parse_data)
 
-  parse_data <- parse_data |>
-    dplyr::filter(.data$line1 != var_calls$line1)
+    parse_data <- parse_data |>
+      dplyr::filter(.data$line1 != var_calls$line1)
 
-  other_exprs_tbl <- parse_data |>
-    filter(.data$parent == 0)
+    other_exprs_tbl <- parse_data |>
+      dplyr::filter(.data$parent == 0)
 
-  other_exprs <- data.frame(line1 = other_exprs_tbl$line1,
-                            line2 = other_exprs_tbl$line2,
-                            fun = "boomer::boom")
+    other_exprs <- data.frame(line1 = other_exprs_tbl$line1,
+                              line2 = other_exprs_tbl$line2,
+                              fun = "boomer::boom")
 
-  exprs <- dplyr::bind_rows(var_calls, other_exprs)
+    exprs <- dplyr::bind_rows(var_calls, other_exprs)
 
-  exprs
+    exprs
+  } else {
+    NULL
+  }
 }
 
 #' Find Where in Source Code Variable is Calling
