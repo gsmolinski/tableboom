@@ -5,14 +5,20 @@ modify_output <- function(output) {
 #' Eval File And Capture Output of Console
 #'
 #' @param temp_path path to temporary, already modified file.
+#' @param script_path path to script chosen by user.
 #'
 #' @return
 #' Output from the console, returned by `utils::capture.output`.
 #' @noRd
-eval_file <- function(temp_path) {
-  parsed_file <- parse(temp_path)
+eval_file <- function(temp_path, script_path) {
+  parsed_orig_file <- parse(script_path)
+  parsed_mod_file <- parse(temp_path)
   e <- new.env()
-  output <- lapply(parsed_file, get_output, envir = e)
+  output <- vector("list", length(parsed_mod_file))
+  for (i in seq_along(parsed_orig_file)) {
+    try(eval(parsed_orig_file[[i]], envir = e))
+    output[[i]] <- get_output(parsed_mod_file[[i]], envir = e)
+  }
   output
 }
 
