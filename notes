@@ -2,4 +2,5 @@
 - For var calls, we need to call dplyr::glimpse as the output from `boom` looks bad even if print is `dplyr::glimpse`.
 - It should be enough to check if expr is just a var call, in other cases print = dplyr::glimpse and excluding empty line should be enough
 - We need to always check if the output from `boom` contains empty line - most probaly this is an indicator that below empty line is output we don't want to include, like here: `boomer::boom(dplyr::select(iris, 1), print = dplyr::glimpse)`
-- remember to set `options(boomer.safe.printing = TRUE)` and `options(boomer.visible_only = TRUE)`, this last case for `source()` calls.
+- remember to set `options(boomer.safe.printing = TRUE)` and `options(boomer.visible_only = TRUE)`, this last case for `source()` calls. And inform user about this!
+- do not perform anything if getParseData() returns nrow() == 0 and display error.

@@ -4,8 +4,8 @@ Title: Inspect Intermediate Steps of Call using 'boomer' Package and Turn
 Version: 0.0.1
 Authors@R: 
     person("Grzegorz", "Smoliński", , "g.smolinski1@gmail.com", role = c("aut", "cre"))
-Description: Choose the range of code lines in R script to inspect
-    intermediate results of all calls in the form of HTML table.
+Description: Choose the R script to inspect intermediate results of all
+    calls in the form of HTML table.
 License: MIT + file LICENSE
 Depends:
     R (>= 4.2.0)

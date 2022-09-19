@@ -1,5 +1,5 @@
 script_path <- paste0(system.file(package = "tableboom", "example_script"), "/example_script.R")
-parse_data <- utils::getParseData(parse(path, keep.source = TRUE, ), includeText = TRUE)
+parse_data <- utils::getParseData(parse(script_path, keep.source = TRUE), includeText = TRUE)
 
 test_that("'insert_fun' inserts correct functions to the correct locations
           and writes temporary file", {
@@ -19,9 +19,3 @@ test_that("'insert_fun' inserts correct functions to the correct locations
             )
             expect_identical(readLines(temp_path), expected)
           })
-
-test_that("'insert_fun' do not save any file if no parse data", {
-  temp_path <- tempfile("tableboom", fileext = ".R")
-  insert_fun(find_exprs(data.frame()), temp_path, script_path)
-  expect_false(file.exists(temp_path))
-})

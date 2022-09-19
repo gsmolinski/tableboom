@@ -11,12 +11,10 @@
 #' this modified source code to the temporary location.
 #' @noRd
 insert_fun <- function(exprs_df, temp_path, script_path) {
-  if (!is.null(exprs_df)) {
-    file <- readLines(script_path)
-    for (i in seq_along(rownames(exprs_df))) {
-      file[exprs_df[i, "line1"]] <- paste0(exprs_df[i, "fun"], "(", file[exprs_df[i, "line1"]])
-      file[exprs_df[i, "line2"]] <- paste0(file[exprs_df[i, "line2"]], ")")
-    }
-    writeLines(file, temp_path)
+  file <- readLines(script_path)
+  for (i in seq_along(rownames(exprs_df))) {
+    file[exprs_df[i, "line1"]] <- paste0(exprs_df[i, "fun"], "(", file[exprs_df[i, "line1"]])
+    file[exprs_df[i, "line2"]] <- paste0(file[exprs_df[i, "line2"]], ")")
   }
+  writeLines(file, temp_path)
 }

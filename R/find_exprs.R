@@ -30,6 +30,8 @@ find_exprs <- function(parse_data) {
                               fun = "boomer::boom")
 
     exprs <- dplyr::bind_rows(var_calls, other_exprs)
+    exprs <- exprs |>
+      dplyr::arrange(line1)
 
     exprs
   } else {
