@@ -62,3 +62,28 @@ restore_options <- function(user_options) {
   options(boomer.visible_only = user_options$boomer_visible_only)
   message("Previous values for options:\nboomer.print,\nboomer.safe_print,\nboomer.visible_only\nare restored")
 }
+
+#' Suppress Any Output
+#'
+#' We use it before `eval_file` to suppress any output
+#' from user script.
+#'
+#' @return
+#' Side effect - nothing will be visible in the console.
+#' We basically stream output to the temp file.
+#' @noRd
+supress_console_output <- function() {
+  sink(tempfile())
+}
+
+#' Restore Output
+#'
+#' Do not `sink()`ing anymore to the file.
+#'
+#' @return
+#' Side effect - output will be visible in the
+#' console again.
+#' @noRd
+restore_console_output <- function() {
+  sink()
+}

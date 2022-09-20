@@ -1,7 +1,8 @@
 user_options <- get_user_options()
 
 test_that("'set_options' gives the desired effect", {
-    set_options()
+    suppressMessages(set_options())
+
     example_df <- data.frame(x = 1:10, y = 2:11)
     expected <- c("<  dplyr::select(dplyr::select(example_df, x, y), y) ", ". <  >  dplyr::select(example_df, x, y) ",
                   ". Rows: 10", ". Columns: 2", ". $ x <int> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10",
@@ -14,13 +15,16 @@ test_that("'set_options' gives the desired effect", {
       dplyr::select(y) |>
       boomer::boom() |>
       utils::capture.output()
+
     expect_identical(obj, expected)
-    restore_options(user_options)
+
+    suppressMessages(restore_options(user_options))
 })
 
 test_that("'restore_options' gives the desired effect", {
-  set_options()
-  restore_options(user_options)
+  suppressMessages(set_options())
+  suppressMessages(restore_options(user_options))
+
   example_df <- data.frame(x = 1:10, y = 2:11)
   expected <- c("💣 dplyr::select(dplyr::select(example_df, x, y), y) ",
                 "· 💣 💥 dplyr::select(example_df, x, y) ", "·     x  y",
@@ -36,5 +40,6 @@ test_that("'restore_options' gives the desired effect", {
     dplyr::select(y) |>
     boomer::boom() |>
     utils::capture.output()
+
   expect_identical(obj, expected)
 })
