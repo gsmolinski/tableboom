@@ -75,7 +75,7 @@ restore_options <- function(user_options) {
 #' We basically stream output to the temp file.
 #' @noRd
 supress_console_output <- function() {
-  sink(tempfile())
+  sink(tempfile("tableboom_sink_", fileext = "txt"))
 }
 
 #' Restore Output
