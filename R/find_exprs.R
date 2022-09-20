@@ -31,7 +31,7 @@ find_exprs <- function(parse_data) {
 
     exprs <- dplyr::bind_rows(var_calls, other_exprs)
     exprs <- exprs |>
-      dplyr::arrange(line1)
+      dplyr::arrange(.data$line1)
 
     exprs
   } else {

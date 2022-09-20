@@ -1,7 +1,9 @@
 #' Ensure CRAN Not Complaining About Imported Package
 #'
 #' CRAN complaints if package is included in DESCRIPTION,
-#' but not used in R files.
+#' but not used in R files. Although we use `boomer::boom`
+#' in tests, but tests are not core of package, can change,
+#' so it will be safer to store `boomer::boom` here.
 #'
 #' @return
 #' This function is never used.

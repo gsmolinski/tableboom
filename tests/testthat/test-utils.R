@@ -22,6 +22,7 @@ test_that("'set_options' gives the desired effect", {
 })
 
 test_that("'restore_options' gives the desired effect", {
+  skip_if_not(interactive())
   suppressMessages(set_options())
   suppressMessages(restore_options(user_options))
 
