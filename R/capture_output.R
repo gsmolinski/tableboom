@@ -9,6 +9,12 @@ modify_output <- function(output) {
 #'
 #' @return
 #' Output from the console, returned by `utils::capture.output`.
+#' @details
+#' `boomer::boom` do not assign value to object, so if some call uses
+#' object defined in previous call, this object won't exist if we would
+#' just wrap all calls into `boomer::boom`. To avoid this problem, we
+#' at first evaluate previous original expression (i.e. not wrapped into
+#' `boomer::boom`) and then eval modified expression.
 #' @noRd
 eval_file <- function(temp_path, script_path) {
   parsed_orig_file <- parse(script_path)
@@ -16,7 +22,7 @@ eval_file <- function(temp_path, script_path) {
   e <- new.env()
   output <- vector("list", length(parsed_mod_file))
   for (i in seq_along(parsed_orig_file)) {
-    try(eval(parsed_orig_file[[i]], envir = e))
+    try(eval(parsed_orig_file[[i - 1]], envir = e), silent = TRUE)
     output[[i]] <- get_output(parsed_mod_file[[i]], envir = e)
   }
   output
