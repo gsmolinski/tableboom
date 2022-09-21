@@ -12,31 +12,24 @@
 #' - line2 - line where expr ends
 #' - fun - name of function (with namespace) to use on the expr,
 #' currently `boomer::boom` or `dplyr::glimpse`.
-#' OR NULL if nrow == 0 from `utils::getParseData()`.
 #' @importFrom rlang .data
 #' @noRd
 find_exprs <- function(parse_data) {
-  if (nrow(parse_data) > 0) {
-    var_calls <- find_var_calls(parse_data)
+  var_calls <- find_var_calls(parse_data)
 
-    parse_data <- parse_data |>
-      dplyr::filter(.data$line1 != var_calls$line1)
+  parse_data <- parse_data |>
+    dplyr::filter(.data$line1 != var_calls$line1)
 
-    other_exprs_tbl <- parse_data |>
-      dplyr::filter(.data$parent == 0)
+  other_exprs <- parse_data |>
+    dplyr::filter(.data$parent == 0) |>
+    dplyr::select(.data$line1, .data$line2, .data$id) |>
+    dplyr::mutate(fun = "boomer::boom")
 
-    other_exprs <- data.frame(line1 = other_exprs_tbl$line1,
-                              line2 = other_exprs_tbl$line2,
-                              fun = "boomer::boom")
+  exprs <- dplyr::bind_rows(var_calls, other_exprs)
+  exprs <- exprs |>
+    dplyr::arrange(.data$line1)
 
-    exprs <- dplyr::bind_rows(var_calls, other_exprs)
-    exprs <- exprs |>
-      dplyr::arrange(.data$line1)
-
-    exprs
-  } else {
-    NULL
-  }
+  exprs
 }
 
 #' Find Where in Source Code Variable is Calling
@@ -49,6 +42,7 @@ find_exprs <- function(parse_data) {
 #' data.frame with 3 columns:
 #' - line1 - line where expr starts
 #' - line2 - line where expr ends
+#' - id - id of expr
 #' - fun - name of function (with namespace) to use on the expr,
 #' because it is var call, we use `dplyr::glimpse`.
 #' @details
@@ -57,14 +51,11 @@ find_exprs <- function(parse_data) {
 #' @importFrom rlang .data
 #' @noRd
 find_var_calls <- function(parse_data) {
-  lines <- parse_data |>
+  var_calls <- parse_data |>
     dplyr::mutate(var_call = dplyr::if_else(.data$parent == 0 & dplyr::lead(.data$parent, default = 0) == 0, TRUE, FALSE)) |>
     dplyr::filter(.data$var_call) |>
-    dplyr::pull(.data$line1)
-
-  var_calls <- data.frame(line1 = lines,
-                          line2 = lines,
-                          fun = "dplyr::glimpse")
+    dplyr::select(.data$line1, .data$line2, .data$id) |>
+    dplyr::mutate(fun = "dplyr::glimpse")
 
   var_calls
 }

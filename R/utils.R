@@ -45,7 +45,7 @@ set_options <- function() {
   options(boomer.print = dplyr::glimpse)
   options(boomer.safe_print = TRUE)
   options(boomer.visible_only = TRUE)
-  message("Setting options:\nboomer.print = dplyr::glimpse\nboomer.safe_print = TRUE\nboomer.visible_only = TRUE")
+  message("Setting options:\nboomer.print = dplyr::glimpse\nboomer.safe_print = TRUE\nboomer.visible_only = TRUE\n")
 }
 
 #' Restore Previous Options
@@ -62,7 +62,7 @@ restore_options <- function(user_options) {
   options(boomer.print = user_options$boomer_print)
   options(boomer.safe_print = user_options$boomer_safe_print)
   options(boomer.visible_only = user_options$boomer_visible_only)
-  message("Previous values for options:\nboomer.print,\nboomer.safe_print,\nboomer.visible_only\nare restored")
+  message("Previous values for options:\nboomer.print,\nboomer.safe_print,\nboomer.visible_only\nare now restored")
 }
 
 #' Suppress Any Output
@@ -75,7 +75,7 @@ restore_options <- function(user_options) {
 #' We basically stream output to the temp file.
 #' @noRd
 supress_console_output <- function() {
-  sink(tempfile("tableboom_sink_", fileext = "txt"))
+  sink(tempfile("tableboom_sink_", fileext = ".txt"))
 }
 
 #' Restore Output

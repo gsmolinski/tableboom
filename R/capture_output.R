@@ -1,7 +1,7 @@
 #' Capture And Modify Output From `boomer::boom` or `dplyr::glimpse`
 #'
-#' @param temp_path path to temporary, already modified file.
-#' @param script_path path to script chosen by user.
+#' @param parsed_mod_file parsed (`parse()`) modified file (script).
+#' @param parsed_orig_file parsed (`parse()`) original file (script).
 #'
 #' @return
 #' List: captured and modified output for each call (each element
@@ -9,8 +9,8 @@
 #' each element - character vector length 1 with indicated line
 #' break (`\n`). If element was NULL, then returns `""`.
 #' @noRd
-capture_output <- function(temp_path, script_path) {
-  output <- eval_file(temp_path, script_path)
+capture_output <- function(parsed_mod_file, parsed_orig_file) {
+  output <- eval_file(parsed_mod_file, parsed_orig_file)
   output <- lapply(output, remove_after_empty)
   output <- lapply(output, remove_named_fun)
   output <- lapply(output, paste0, collapse = "\n")
@@ -19,8 +19,8 @@ capture_output <- function(temp_path, script_path) {
 
 #' Eval File And Capture Output of Console
 #'
-#' @param temp_path path to temporary, already modified file.
-#' @param script_path path to script chosen by user.
+#' @param parsed_mod_file parsed (`parse()`) modified file (script).
+#' @param parsed_orig_file parsed (`parse()`) original file (script).
 #'
 #' @return
 #' List: output from the console, returned by `utils::capture.output`.
@@ -32,9 +32,7 @@ capture_output <- function(temp_path, script_path) {
 #' at first evaluate previous original expression (i.e. not wrapped into
 #' `boomer::boom`) and then eval modified expression.
 #' @noRd
-eval_file <- function(temp_path, script_path) {
-  parsed_orig_file <- parse(script_path)
-  parsed_mod_file <- parse(temp_path)
+eval_file <- function(parsed_mod_file, parsed_orig_file) {
   e <- new.env()
   output <- vector("list", length(parsed_mod_file))
   for (i in seq_along(parsed_orig_file)) {

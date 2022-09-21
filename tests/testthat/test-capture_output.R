@@ -7,6 +7,8 @@ test_that("'capture_output' returns list with correct result", {
   supress_console_output()
   user_options <- get_user_options()
   suppressMessages(set_options())
+  parsed_mod_file <- parse(temp_path)
+  parsed_orig_file <- parse(script_path)
   expected <- list("<  >  library(dplyr) ", "<  >  system.file(package = \"tableboom\", \"example_script\") \n chr \"C:/!G/tableboom/inst/example_script\"",
                    "<  source(paste0(dir, \"/example_script_sourced_inside.R\")) \n. <  >  paste0(dir, \"/example_script_sourced_inside.R\") \n.  chr \"C:/!G/tableboom/inst/example_script/example_script_sourced_inside.R\"\n. \n>  source(paste0(dir, \"/example_script_sourced_inside.R\")) ",
                    "", "", "", "<  assign(\"my_fun5\", function(x) x + 2) \n. <  function(x) x + 2 \n. >  function(x) x + 2 \n. function (x)  \n.  - attr(*, \"srcref\")= 'srcref' int [1:8] 19 32 19 48 32 48 19 19\n.   ..- attr(*, \"srcfile\")=Classes 'srcfilecopy', 'srcfile' <environment: 0x000001d8c0500990> \n. \n>  assign(\"my_fun5\", function(x) x + 2) ",
@@ -15,7 +17,7 @@ test_that("'capture_output' returns list with correct result", {
                    "<  my_df %>%... \n. <  select(., y) \n. . <  mutate(., y = mean(my_vec)) \n. . . <  >  mean(my_vec) \n. . .  num 11\n. . . \n. . >  mutate(., y = mean(my_vec)) \n. . Rows: 1\n. . Columns: 2\n. . $ x <dbl> 1\n. . $ y <dbl> 11\n. . \n. >  select(., y) \n. Rows: 1\n. Columns: 1\n. $ y <dbl> 11\n. \n>  my_df %>%\n     mutate(y = mean(my_vec)) %>%\n     select(y) \nRows: 1\nColumns: 1\n$ y <dbl> 11",
                    "'data.frame':\t1 obs. of  1 variable:\n $ y: num 11\n<  >  str(my_df) ",
                    "Rows: 1\nColumns: 1\n$ y <dbl> 11")
-  obj <- capture_output(temp_path, script_path)
+  obj <- capture_output(parsed_mod_file, parsed_orig_file)
   suppressMessages(restore_options(user_options))
   restore_console_output()
 
@@ -28,7 +30,9 @@ test_that("'capture_output' returns list with correct result", {
 
 test_that("'eval_file' successfully returns output for all calls", {
   supress_console_output()
-  expect_error(eval_file(temp_path, script_path), NA)
+  parsed_mod_file <- parse(temp_path)
+  parsed_orig_file <- parse(script_path)
+  expect_error(eval_file(parsed_mod_file, parsed_orig_file), NA)
   restore_console_output()
 })
 
@@ -43,4 +47,5 @@ test_that("'remove_named_fun' removes output if named function
             suppressMessages(set_options())
             result <- boomer::boom(fun <- function(x) x) |> utils::capture.output()
             expect_null(remove_named_fun(result))
+            suppressMessages(restore_options(user_options))
           })

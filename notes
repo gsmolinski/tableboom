@@ -1,2 +1,0 @@
-- do not perform anything if getParseData() returns nrow() == 0 and display error.
-- sink just before `capture_output` and unisink right after `capture_output`.
