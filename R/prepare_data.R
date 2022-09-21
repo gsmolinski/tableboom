@@ -3,11 +3,11 @@
 #' @param script_path - path to original script, i.e. script which will be inspected.
 #'
 #' @return
-#' tibble with cols:
-#' - line - lines as a character vector length 1 (separated by `\n`)
-#' - src_code - source code as a character vector length 1 (separated by `\n`)
+#' data.frame with cols:
+#' - line - lines as a character vector (separated by `\n`)
+#' - src_code - source code as a character vector (separated by `\n`)
 #' - inspected_src_code - output from `dplyr::glimpse` or `boomer::boom` as
-#' a character vector length 1 (separated by `\n`)
+#' a character vector (separated by `\n`)
 #' or Error (Error if nrow == 0 for data retrieved by `utils::getParseData()`
 #' used on original script).
 #' @noRd
@@ -32,7 +32,7 @@ prepare_data <- function(script_path) {
     restore_options(user_options)
 
     prepared_data <- prepared_orig_script |>
-      dplyr::mutate(inspected_src_code = inspected_src_code)
+      dplyr::mutate(inspected_src_code = unlist(inspected_src_code, use.names = FALSE))
 
     prepared_data
   } else {
@@ -47,17 +47,17 @@ prepare_data <- function(script_path) {
 #' as line1, line2, id and fun to inspect (`dplyr::glimpse` or `boomer::boom`)
 #'
 #' @return
-#' tibble - each column is a list containing data retrieved from original script:
-#' - line - lines as a character vector length 1 (separated by `\n`)
-#' - src_code - source code as a character vector length 1 (separated by `\n`)
+#' data.frame - each column contains data retrieved from original script:
+#' - line - lines as a character vector (separated by `\n`)
+#' - src_code - source code as a character vector (separated by `\n`)
 #' Each row correspondents to each expression from original script.
 #' @noRd
 prepare_orig_script <- function(parse_data, exprs_df) {
   line <- seq_vectorized(from = exprs_df$line1, to = exprs_df$line2)
-  line <- lapply(line, paste0, collapse = "\n")
-  src_code <- lapply(exprs_df$id, function(e) utils::getParseText(parse_data, e))
+  line <- vapply(line, paste0, FUN.VALUE = character(1), collapse = "\n")
+  src_code <- vapply(exprs_df$id, function(e) utils::getParseText(parse_data, e), FUN.VALUE = character(1))
 
-  tibble::tibble(line = line,
+  data.frame(line = line,
                  src_code = src_code)
 }
 
