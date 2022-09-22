@@ -7,9 +7,10 @@
 #' @param parse_data object returned by `utils::getParseData()`.
 #'
 #' @return
-#' data.frame with 3 columns:
+#' data.frame with 4 columns:
 #' - line1 - line where expr starts
 #' - line2 - line where expr ends
+#' - id - id of expr from `utils::getParseData()`
 #' - fun - name of function (with namespace) to use on the expr,
 #' currently `boomer::boom` or `dplyr::glimpse`.
 #' @importFrom rlang .data
