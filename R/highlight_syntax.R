@@ -1,9 +1,9 @@
-#' Add HTML <span> Code To Highlight Syntax
+#' Add HTML 'span' Code To Highlight Syntax
 #'
 #' @param code source code to apply syntax highlighting on
 #'
 #' @return
-#' Character vector with <span> tags added with classes.
+#' Character vector with 'span' tags added with classes.
 #' @details
 #' For this function crucial is to correctly set CSS rules.
 #' @noRd
