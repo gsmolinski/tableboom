@@ -1,17 +1,20 @@
 #' Create Table
 #'
 #' @param script_path path to original script, will be used as table title / header.
-#' @param prepared_data data to be used in table.
+#' @param prepared_data data returned by `prepare_data()`.
 #'
 #' @return
 #' Table object.
 #' @import gt
 #' @noRd
 create_table <- function(script_path, prepared_data) {
-  table_data <- transform_data(prepared_data)
-
-  gt_table <- table_data |>
-    gt()
+  prepared_data |>
+    transform_data() |>
+    gt() |>
+    text_transform(locations = cells_body(),
+                   fn = function(e) lapply(e, function(x) html(stringi::stri_replace_all_fixed(x, "\n", "<br/>")))) |>
+    text_transform(locations = cells_body(code, which(.data$line != "")),
+                   fn = function(e) lapply(e, function(x) html(highlight_syntax(x))))
 }
 
 #' Transform Data Into Mode Applicable For Table
@@ -36,8 +39,8 @@ transform_data <- function(prepared_data) {
     dplyr::select(.data$order, .data$line, .data$code)
 
   prepared_data_inspected <- prepared_data |>
-    dplyr::mutate(line = "") |>
-    dplyr::mutate(order = seq.int(2, nrow(prepared_data) * 2, 2)) |>
+    dplyr::mutate(line = "",
+                  order = seq.int(2, nrow(prepared_data) * 2, 2)) |>
     dplyr::rename(code = .data$inspected_src_code) |>
     dplyr::select(.data$order, .data$line, .data$code)
 
@@ -49,3 +52,34 @@ transform_data <- function(prepared_data) {
 
   transformed_data
 }
+
+#' Add HTML 'span' Tag To Highlight Syntax
+#'
+#' @param code source code to apply syntax highlighting on.
+#'
+#' @return
+#' Character vector with 'span' tags added with classes.
+#' @details
+#' For this function crucial is to correctly set CSS rules.
+#' @noRd
+highlight_syntax <- function(code) {
+  code |>
+    stringi::stri_replace_all_regex('(["](.*?)["])', '<span class = "string_code">$1</span>') |>
+    stringi::stri_replace_all_regex("(['](.*?)['])", "<span class = 'string_code'>$1</span>") |>
+    stringi::stri_replace_all_regex("(\\.*[\\w.]+|`.+`)(?=\\()", "<span class = 'fun_call_code'>$1</span>") |>
+    stringi::stri_replace_all_regex("(%.+%)", "<span class = 'fun_call_code'>$1</span>") |>
+    stringi::stri_replace_all_regex("(\\w+:{3}|\\w+:{2})", "<span class = 'namespace_code'>$1</span>") |>
+    stringi::stri_replace_all_regex("\\b((?:TRUE|FALSE|T|F|NA|NA_character_|NA_integer_|NA_complex_|NA_real_|NULL))\\b", "<span class = 'specials_code'>$1</span>") |>
+    stringi::stri_replace_all_regex("\\b((?:if|else|repeat|while|for|in|next|break))\\b", "<span class = 'keyword_code'>$1</span>") |>
+    stringi::stri_replace_all_regex("\\b([-+]?(0x[\\dA-Fa-f]+|\\d*\\.?\\d+([Ee]-?\\d+)?i?|Inf|NaN))\\b", "<span class = 'number_code'>$1</span>") |>
+    stringi::stri_replace_all_fixed("#", "<span class = 'comment_code'>#</span>") |>
+    stringi::stri_replace_all_fixed("(", "<span class = 'bracket_code'>(</span>") |>
+    stringi::stri_replace_all_fixed(")", "<span class = 'bracket_code'>)</span>") |>
+    stringi::stri_replace_all_fixed("{", "<span class = 'brace_code'>{</span>") |>
+    stringi::stri_replace_all_fixed("}", "<span class = 'brace_code'>}</span>") |>
+    stringi::stri_replace_all_fixed("[", "<span class = 'select_code'>[</span>") |>
+    stringi::stri_replace_all_fixed("]", "<span class = 'select_code'>]</span>") |>
+    stringi::stri_replace_all_fixed("$", "<span class = 'select_code'>$</span>") |>
+    stringi::stri_replace_all_fixed("|>", "<span class = 'fun_call_code'>$1</span>")
+}
+
