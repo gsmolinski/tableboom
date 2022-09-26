@@ -11,10 +11,14 @@ create_table <- function(script_path, prepared_data) {
   prepared_data |>
     transform_data() |>
     gt() |>
+    tab_header(basename(script_path)) |>
     text_transform(locations = cells_body(),
                    fn = function(e) lapply(e, function(x) html(stringi::stri_replace_all_fixed(x, "\n", "<br/>")))) |>
     text_transform(locations = cells_body(code, which(.data$line != "")),
-                   fn = function(e) lapply(e, function(x) html(highlight_syntax(x))))
+                   fn = function(e) lapply(e, function(x) html(highlight_syntax(x)))) |>
+    opt_table_font(font = google_font("Fira Code")) |>
+    opt_css(css = add_css()) |>
+    tab_options(column_labels.hidden = TRUE)
 }
 
 #' Transform Data Into Mode Applicable For Table

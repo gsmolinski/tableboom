@@ -1,0 +1,59 @@
+ .gt_table {
+   color: #2f4f4f !important;
+ }
+
+ .gt_header {
+   color: #8b8589 !important;
+ }
+
+ .string_code,
+ .string_code .comment_code,
+ .string_code .bracket_code,
+ .string_code .select_code,
+ .string_code .keyword_code,
+ .string_code .specials_code,
+ .string_code .namespace_code,
+ .string_code .fun_call_code,
+ .string_code .brace_code,
+ .string_code .number_code {
+  color: #4e9a06;
+  background-color: inherit;
+}
+
+ .comment_code {
+  color: white;
+  background-color: #6f7850;
+}
+
+ .bracket_code {
+  color: #FF6600;
+}
+
+ .select_code {
+  color: #a2006d;
+}
+
+ .keyword_code {
+  color: #0099FF;
+}
+
+ .number_code {
+  color: #8f5902;
+}
+
+ .specials_code {
+  color: #CF4F5F;
+}
+
+ .namespace_code {
+  color: #b88a00;
+}
+
+ .fun_call_code,
+ .fun_call_code .keyword_code {
+  color: #6464dd;
+}
+
+ .brace_code {
+  color: #fc0fc0;
+}

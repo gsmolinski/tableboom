@@ -89,3 +89,15 @@ supress_console_output <- function() {
 restore_console_output <- function() {
   sink()
 }
+
+#' Read CSS And Turn It Into Character Vector Length 1
+#'
+#' @return
+#' Character vector of length 1
+#' @details
+#' It looks like currently in [gt] is not possible to
+#' use styles in separate css file.
+#' @noRd
+add_css <- function() {
+  paste0(readLines(file.path(system.file(package = "tableboom", "www"), "tableboomstyle.css")), collapse = " ")
+}
