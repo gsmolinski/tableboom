@@ -11,15 +11,18 @@ create_table <- function(script_path, prepared_data) {
   prepared_data |>
     transform_data() |>
     gt() |>
-    tab_header(html(glue::glue("<em>{basename(script_path)}</em>"))) |>
+    tab_header("", subtitle = html(glue::glue("<em>{basename(script_path)}</em>"))) |>
+    cols_align("center", .data$line) |>
     text_transform(cells_body(),
-                   fn = function(e) lapply(e, function(x) html(stringi::stri_replace_all_fixed(x, "\n", "<br/>")))) |>
-    text_transform(cells_body(code, which(.data$line != "")),
-                   fn = function(e) lapply(e, function(x) html(highlight_syntax(x)))) |>
+                   fn = \(e) lapply(e, \(x) html(stringi::stri_replace_all_fixed(x, "\n", "<br/>")))) |>
+    text_transform(cells_body(.data$line, which(.data$line != "")),
+                   fn = \(e) lapply(e, \(x) html(glue::glue("<div class = 'line'>{x}</div>")))) |>
+    text_transform(cells_body(.data$code, which(.data$line != "")),
+                   fn = \(e) lapply(e, \(x) html(highlight_syntax(x)))) |>
     opt_align_table_header("right") |>
     opt_table_font(google_font("Fira Code")) |>
     opt_table_lines("none") |>
-    opt_table_outline() |>
+    opt_table_outline(color = "#fccfcf", width = "1px") |>
     opt_css(css = add_css()) |>
     tab_options(column_labels.hidden = TRUE,
                 table.font.color = "#2f4f4f")
@@ -89,3 +92,6 @@ highlight_syntax <- function(code) {
     stringi::stri_replace_all_fixed("$", "<span class = 'select_code'>$</span>")
 }
 
+add_divs_blocks <- function(inspect_output) {
+
+}
