@@ -11,14 +11,18 @@ create_table <- function(script_path, prepared_data) {
   prepared_data |>
     transform_data() |>
     gt() |>
-    tab_header(basename(script_path)) |>
-    text_transform(locations = cells_body(),
+    tab_header(html(glue::glue("<em>{basename(script_path)}</em>"))) |>
+    text_transform(cells_body(),
                    fn = function(e) lapply(e, function(x) html(stringi::stri_replace_all_fixed(x, "\n", "<br/>")))) |>
-    text_transform(locations = cells_body(code, which(.data$line != "")),
+    text_transform(cells_body(code, which(.data$line != "")),
                    fn = function(e) lapply(e, function(x) html(highlight_syntax(x)))) |>
-    opt_table_font(font = google_font("Fira Code")) |>
+    opt_align_table_header("right") |>
+    opt_table_font(google_font("Fira Code")) |>
+    opt_table_lines("none") |>
+    opt_table_outline() |>
     opt_css(css = add_css()) |>
-    tab_options(column_labels.hidden = TRUE)
+    tab_options(column_labels.hidden = TRUE,
+                table.font.color = "#2f4f4f")
 }
 
 #' Transform Data Into Mode Applicable For Table
@@ -71,7 +75,6 @@ highlight_syntax <- function(code) {
     stringi::stri_replace_all_regex('(["](.*?)["])', '<span class = "string_code">$1</span>') |>
     stringi::stri_replace_all_regex("(['](.*?)['])", "<span class = 'string_code'>$1</span>") |>
     stringi::stri_replace_all_regex("(\\.*[\\w.]+|`.+`)(?=\\()", "<span class = 'fun_call_code'>$1</span>") |>
-    stringi::stri_replace_all_regex("(%.+%)", "<span class = 'fun_call_code'>$1</span>") |>
     stringi::stri_replace_all_regex("(\\w+:{3}|\\w+:{2})", "<span class = 'namespace_code'>$1</span>") |>
     stringi::stri_replace_all_regex("\\b((?:TRUE|FALSE|T|F|NA|NA_character_|NA_integer_|NA_complex_|NA_real_|NULL))\\b", "<span class = 'specials_code'>$1</span>") |>
     stringi::stri_replace_all_regex("\\b((?:if|else|repeat|while|for|in|next|break))\\b", "<span class = 'keyword_code'>$1</span>") |>
@@ -83,7 +86,6 @@ highlight_syntax <- function(code) {
     stringi::stri_replace_all_fixed("}", "<span class = 'brace_code'>}</span>") |>
     stringi::stri_replace_all_fixed("[", "<span class = 'select_code'>[</span>") |>
     stringi::stri_replace_all_fixed("]", "<span class = 'select_code'>]</span>") |>
-    stringi::stri_replace_all_fixed("$", "<span class = 'select_code'>$</span>") |>
-    stringi::stri_replace_all_fixed("|>", "<span class = 'fun_call_code'>$1</span>")
+    stringi::stri_replace_all_fixed("$", "<span class = 'select_code'>$</span>")
 }
 

@@ -12,6 +12,7 @@ Depends:
 Imports: 
     boomer,
     dplyr,
+    glue,
     gt,
     rlang,
     rstudioapi,
