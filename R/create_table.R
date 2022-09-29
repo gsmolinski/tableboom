@@ -12,14 +12,17 @@ create_table <- function(script_path, prepared_data) {
     transform_data() |>
     gt() |>
     tab_header("", subtitle = html(glue::glue("<em>{basename(script_path)}</em>"))) |>
-    cols_align("center", .data$line) |>
+    tab_source_note(html(glue::glue("<div class = 'source_note'>{basename(script_path)}</div>"))) |>
     text_transform(cells_body(),
                    fn = \(e) lapply(e, \(x) html(stringi::stri_replace_all_fixed(x, "\n", "<br/>")))) |>
     text_transform(cells_body(.data$line, which(.data$line != "")),
                    fn = \(e) lapply(e, \(x) html(glue::glue("<div class = 'line'>{x}</div>")))) |>
     text_transform(cells_body(.data$code, which(.data$line != "")),
                    fn = \(e) lapply(e, \(x) html(highlight_syntax(x)))) |>
+    text_transform(cells_body(.data$code, which(.data$line == "")),
+                   fn = \(e) lapply(e, \(x) html(insert_div(x)))) |>
     opt_align_table_header("right") |>
+    cols_align("center", .data$line) |>
     opt_table_font(google_font("Fira Code")) |>
     opt_table_lines("none") |>
     opt_table_outline(color = "#fccfcf", width = "1px") |>
@@ -92,6 +95,20 @@ highlight_syntax <- function(code) {
     stringi::stri_replace_all_fixed("$", "<span class = 'select_code'>$</span>")
 }
 
-add_divs_blocks <- function(inspect_output) {
-
+#' Insert 'div' Tags
+#'
+#' @param code_output output from inspect function
+#' (`boomer::boom` or `dplyr::glimpse`) after modifications,
+#' i.e. character vector length 1 currently stored in table.
+#'
+#' @return
+#' Character vector with 'div' tags added and proper class.
+#' @details
+#' Divs are necessary to change style. We want to add borders
+#' (different colors depending on output object, e.g. chr, num)
+#' and background color for the whole block of output.
+#' @noRd
+insert_div <- function(code_output) {
+  code_output <- paste0("<div class = 'output_whole'>", code_output, "</div>")
+  code_output
 }

@@ -2,6 +2,11 @@
    white-space: pre-wrap;
  }
 
+ .source_note {
+   font-style: italic;
+   text-align: right;
+ }
+
  .string_code,
  .string_code .comment_code,
  .string_code .bracket_code,
@@ -57,4 +62,9 @@
 .line {
   background-color: #4a7c7c;
   color: #fccfcf;
+}
+
+.output_whole {
+  margin-left: 3%;
+  background-color: #f4f0ec;
 }
