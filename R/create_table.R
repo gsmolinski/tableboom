@@ -20,7 +20,9 @@ create_table <- function(script_path, prepared_data) {
     text_transform(cells_body(.data$code, which(.data$line != "")),
                    fn = \(e) lapply(e, \(x) html(highlight_syntax(x)))) |>
     text_transform(cells_body(.data$code, which(.data$line == "")),
-                   fn = \(e) lapply(e, \(x) html(insert_div(x)))) |>
+                   fn = \(e) lapply(e, \(x) clean_output(x, "<br/>"))) |>
+    text_transform(cells_body(.data$code, which(.data$line == "")),
+                   fn = \(e) lapply(e, \(x) html(insert_div(x, "<br/>")))) |>
     opt_align_table_header("right") |>
     cols_align("center", .data$line) |>
     opt_table_font(google_font("Fira Code")) |>
@@ -95,11 +97,36 @@ highlight_syntax <- function(code) {
     stringi::stri_replace_all_fixed("$", "<span class = 'select_code'>$</span>")
 }
 
+#' Remove Dots From The Beginning Of Output
+#'
+#' @param code_output output from inspect function
+#' (`boomer::boom` or `dplyr::glimpse`) after modifications,
+#' i.e. character vector length 1 currently stored in table.
+#' @param split_sign character vector to split by.
+#'
+#' @return
+#' Character vector with removed dots at the beginning.
+#' @noRd
+clean_output <- function(code_output, split_sign) {
+  code_output <- code_output |>
+    stringi::stri_split_fixed(split_sign) |>
+    unlist(use.names = FALSE) |>
+    stringi::stri_replace_all_regex("^\\.", " ")
+
+  while (any(stringi::stri_detect_regex(code_output, "^\\s+\\."))) {
+    code_output <- stringi::stri_replace_all_regex(code_output, "(^\\s+)\\.", "$1 ")
+  }
+
+  code_output <- paste0(code_output, collapse = split_sign)
+  code_output
+}
+
 #' Insert 'div' Tags
 #'
 #' @param code_output output from inspect function
 #' (`boomer::boom` or `dplyr::glimpse`) after modifications,
 #' i.e. character vector length 1 currently stored in table.
+#' @param split_sign character vector to split by.
 #'
 #' @return
 #' Character vector with 'div' tags added and proper class.
@@ -108,7 +135,11 @@ highlight_syntax <- function(code) {
 #' (different colors depending on output object, e.g. chr, num)
 #' and background color for the whole block of output.
 #' @noRd
-insert_div <- function(code_output) {
+insert_div <- function(code_output, split_sign) {
   code_output <- paste0("<div class = 'output_whole'>", code_output, "</div>")
+
+
+
+  code_output <- paste0(code_output, collapse = split_sign)
   code_output
 }
