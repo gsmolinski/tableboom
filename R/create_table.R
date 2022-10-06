@@ -69,6 +69,16 @@ transform_data <- function(prepared_data) {
   transformed_data
 }
 
+stylize_content <- function(transformed_data) {
+  transformed_data |>
+    dplyr::mutate(dplyr::across(.fns = stringi::stri_replace_all_fixed,
+                                pattern = "\n", replacement = "<br/>"),
+                  line = ifelse(.data$line != "", glue::glue("<div class = 'line'>{.data$line}</div>"), .data$line),
+                  code = ifelse(.data$line != "", highlight_syntax(.data$code), .data$code),
+                  code = ifelse(.data$line == "", clean_output(.data$code, "<br/>"), .data$code),
+                  code = ifelse(.data$line == "", insert_div(.data$code, "<br/>"), .data$code))
+}
+
 #' Add HTML 'span' Tag To Highlight Syntax
 #'
 #' @param code source code to apply syntax highlighting on.
@@ -117,6 +127,8 @@ clean_output <- function(code_output, split_sign) {
     code_output <- stringi::stri_replace_all_regex(code_output, "(^\\s+)\\.", "$1 ")
   }
 
+  code_output <- stringi::stri_replace_all_regex(code_output, "^\\s*$", "")
+
   code_output <- paste0(code_output, collapse = split_sign)
   code_output
 }
@@ -137,7 +149,7 @@ clean_output <- function(code_output, split_sign) {
 #' @noRd
 insert_div <- function(code_output, split_sign) {
   code_output <- paste0("<div class = 'output_whole'>", code_output, "</div>")
-
+  #code_output <- stringi::stri_replace_all_regex(code_output, "<br/>(\\s*<?\\s*>.+)<br/><br/>", "<br/><div class = 'output_segment'>$1</div><br/><br/>")
 
 
   code_output <- paste0(code_output, collapse = split_sign)

@@ -68,3 +68,9 @@
   margin-left: 3%;
   background-color: #fdf0e3;
 }
+
+.output_segment {
+  border-style: solid;
+  border-color: white;
+  border-width: 3px;
+}
