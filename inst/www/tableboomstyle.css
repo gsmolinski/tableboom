@@ -70,7 +70,47 @@
 }
 
 .output_segment {
-  border-style: solid;
-  border-color: white;
-  border-width: 3px;
+  padding: 0;
+  margin: 0;
+  border-top: 2px solid white;
+}
+
+.output_segment + br {
+  display: none;
+}
+
+.fun_output {
+  border-left: 6px groove #b1b1ee;
+}
+
+.error_output {
+ border-left: 6px groove #ff9999;
+}
+
+.attr_output {
+ border-left: 6px groove gold;
+}
+
+.int_output {
+ border-left: 6px groove #e5b7ee;
+}
+
+.dbl_output {
+ border-left: 6px groove #b9d7d9;
+}
+
+.num_output {
+  border-left: 6px groove #d2bc99;
+}
+
+.chr_output {
+  border-left: 6px groove #b8d69b;
+}
+
+.logi_output {
+  border-left: 6px groove #feb7ec;
+}
+
+.cplx_output {
+  border-left: 6px groove #99ffff;
 }

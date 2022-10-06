@@ -14,15 +14,15 @@ create_table <- function(script_path, prepared_data) {
     tab_header("", subtitle = html(glue::glue("<em>{basename(script_path)}</em>"))) |>
     tab_source_note(html(glue::glue("<div class = 'source_note'>{basename(script_path)}</div>"))) |>
     text_transform(cells_body(),
-                   fn = \(e) lapply(e, \(x) html(stringi::stri_replace_all_fixed(x, "\n", "<br/>")))) |>
+                   fn = \(e) lapply(e, \(x) stringi::stri_replace_all_fixed(x, "\n", "<br/>"))) |>
     text_transform(cells_body(.data$line, which(.data$line != "")),
-                   fn = \(e) lapply(e, \(x) html(glue::glue("<div class = 'line'>{x}</div>")))) |>
+                   fn = \(e) lapply(e, \(x) glue::glue("<div class = 'line'>{x}</div>"))) |>
     text_transform(cells_body(.data$code, which(.data$line != "")),
-                   fn = \(e) lapply(e, \(x) html(highlight_syntax(x)))) |>
+                   fn = \(e) lapply(e, \(x) highlight_syntax(x))) |>
     text_transform(cells_body(.data$code, which(.data$line == "")),
                    fn = \(e) lapply(e, \(x) clean_output(x, "<br/>"))) |>
     text_transform(cells_body(.data$code, which(.data$line == "")),
-                   fn = \(e) lapply(e, \(x) html(insert_div(x, "<br/>")))) |>
+                   fn = \(e) lapply(e, \(x) insert_div(x, "<br/>"))) |>
     opt_align_table_header("right") |>
     cols_align("center", .data$line) |>
     opt_table_font(google_font("Fira Code")) |>
@@ -67,16 +67,6 @@ transform_data <- function(prepared_data) {
     dplyr::select(.data$line, .data$code)
 
   transformed_data
-}
-
-stylize_content <- function(transformed_data) {
-  transformed_data |>
-    dplyr::mutate(dplyr::across(.fns = stringi::stri_replace_all_fixed,
-                                pattern = "\n", replacement = "<br/>"),
-                  line = ifelse(.data$line != "", glue::glue("<div class = 'line'>{.data$line}</div>"), .data$line),
-                  code = ifelse(.data$line != "", highlight_syntax(.data$code), .data$code),
-                  code = ifelse(.data$line == "", clean_output(.data$code, "<br/>"), .data$code),
-                  code = ifelse(.data$line == "", insert_div(.data$code, "<br/>"), .data$code))
 }
 
 #' Add HTML 'span' Tag To Highlight Syntax
@@ -149,7 +139,25 @@ clean_output <- function(code_output, split_sign) {
 #' @noRd
 insert_div <- function(code_output, split_sign) {
   code_output <- paste0("<div class = 'output_whole'>", code_output, "</div>")
-  #code_output <- stringi::stri_replace_all_regex(code_output, "<br/>(\\s*<?\\s*>.+)<br/><br/>", "<br/><div class = 'output_segment'>$1</div><br/><br/>")
+
+  code_output <- code_output |>
+    stringi::stri_split_fixed(split_sign) |>
+    unlist(use.names = FALSE)
+
+  code_output <- ifelse(stringi::stri_detect_regex(code_output, "^\\s*&lt;\\s*&gt;|^\\s*&gt;"),
+                        paste0("<div class = 'output_segment'>", code_output, "</div>"),
+                        code_output)
+
+  code_output <- dplyr::case_when(stringi::stri_detect_regex(code_output, "^\\s*function") ~ paste0("<span class = 'fun_output'>", code_output, "</span>"),
+                                  stringi::stri_detect_regex(code_output, "^\\s*Error:") ~ paste0("<span class = 'error_output'>", code_output, "</span>"),
+                                  stringi::stri_detect_regex(code_output, "^\\s*- attr\\(") ~ paste0("<span class = 'attr_output'>", code_output, "</span>"),
+                                  stringi::stri_detect_regex(code_output, "^\\s*int|^\\s*\\$.+&lt;int&gt;|^\\s*\\$.+:\\sint\\s") ~ paste0("<span class = 'int_output'>", code_output, "</span>"),
+                                  stringi::stri_detect_regex(code_output, "^\\s*dbl|^\\s*\\$.+&lt;dbl&gt;|^\\s*\\$.+:\\sdbl\\s") ~ paste0("<span class = 'dbl_output'>", code_output, "</span>"),
+                                  stringi::stri_detect_regex(code_output, "^\\s*num|^\\s*\\$.+&lt;num&gt;|^\\s*\\$.+:\\snum\\s") ~ paste0("<span class = 'num_output'>", code_output, "</span>"),
+                                  stringi::stri_detect_regex(code_output, "^\\s*chr|^\\s*\\$.+&lt;chr&gt;|^\\s*\\$.+:\\schr\\s") ~ paste0("<span class = 'chr_output'>", code_output, "</span>"),
+                                  stringi::stri_detect_regex(code_output, "^\\s*logi|^\\s*\\$.+&lt;logi&gt;|^\\s*\\$.+:\\slogi\\s") ~ paste0("<span class = 'logi_output'>", code_output, "</span>"),
+                                  stringi::stri_detect_regex(code_output, "^\\s*cplx|^\\s*\\$.+&lt;cplx&gt;|^\\s*\\$.+:\\scplx\\s") ~ paste0("<span class = 'cplx_output'>", code_output, "</span>"),
+                                  TRUE ~ code_output)
 
 
   code_output <- paste0(code_output, collapse = split_sign)
