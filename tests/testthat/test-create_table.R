@@ -1,5 +1,5 @@
 script_path <- paste0(system.file(package = "tableboom", "example_script"), "/example_script.R")
-prepared_data <- suppressMessages(prepare_data(script_path))
+prepared_data <- prepare_data(script_path)
 
 test_that("'highlight_syntax' returns <span> tags added in correct locations", {
   expect_identical(highlight_syntax(prepared_data$src_code),

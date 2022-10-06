@@ -26,7 +26,7 @@ prepare_data <- function(script_path) {
     prepared_orig_script <- prepare_orig_script(parse_data_orig_file, exprs_df)
 
     supress_console_output()
-    inspected_src_code <- suppressWarnings(suppressMessages(capture_output(parsed_mod_file, parsed_orig_file)))
+    inspected_src_code <- capture_output(parsed_mod_file, parsed_orig_file)
     restore_console_output()
 
     restore_options(user_options)
