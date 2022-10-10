@@ -4,6 +4,7 @@ temp_path <- tempfile("tableboom", fileext = ".R")
 insert_fun(find_exprs(parse_data), temp_path, script_path)
 
 test_that("'capture_output' returns list with correct result", {
+  skip_if_not(interactive())
   supress_console_output()
   user_options <- get_user_options()
   suppressMessages(set_options())

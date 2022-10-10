@@ -28,4 +28,15 @@ test_that("'transform_data' returns data in expected form", {
   expect_identical(transform_data(df), expected)
 })
 
+test_that("'clean_output' removes dots and unnecessary space", {
+  obj <- "<  my_df %>%... \n. <  select(., y) \n. . <  mutate(., y = mean(my_vec)) \n. . . <  >  mean(my_vec) \n. . .  num 11\n. . . \n. . >  mutate(., y = mean(my_vec)) \n. . Rows: 1\n. . Columns: 2\n. . $ x <dbl> 1\n. . $ y <dbl> 11\n. . \n. >  select(., y) \n. Rows: 1\n. Columns: 1\n. $ y <dbl> 11\n. \n>  my_df %>%\n     mutate(y = mean(my_vec)) %>%\n     select(y) \nRows: 1\nColumns: 1\n$ y <dbl> 11"
+  clean_output(obj, "\n")
+  expect_identical(clean_output(obj, "\n"),
+                   "<  my_df %>%... \n  <  select(., y) \n    <  mutate(., y = mean(my_vec)) \n      <  >  mean(my_vec) \n       num 11\n\n    >  mutate(., y = mean(my_vec)) \n    Rows: 1\n    Columns: 2\n    $ x <dbl> 1\n    $ y <dbl> 11\n\n  >  select(., y) \n  Rows: 1\n  Columns: 1\n  $ y <dbl> 11\n\n>  my_df %>%\n     mutate(y = mean(my_vec)) %>%\n     select(y) \nRows: 1\nColumns: 1\n$ y <dbl> 11")
+})
 
+test_that("'insert_div' insert divs in correct locations", {
+  obj <- "  <  c(1, 2, 3) \n   num 1 2 3\n"
+  expect_identical(insert_div(obj, "\n"),
+                   "<div class = 'output_whole'>  <  c(1, 2, 3) \n<span class = 'num_output'>   num 1 2 3</span>\n</div>")
+})

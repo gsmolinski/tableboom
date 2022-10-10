@@ -2,6 +2,7 @@ script_path <- paste0(system.file(package = "tableboom", "example_script"), "/ex
 
 test_that("'prepare_data' returns correctly prepared
           original source code with inspected output", {
+            skip_if_not(interactive())
   expected <- structure(list(line = c("1", "3", "5", "7\n8\n9", "11\n12\n13",
                                       "15\n16\n17", "19", "21\n22\n23", "25", "27", "29", "31\n32\n33",
                                       "35", "36"), src_code = c("library(dplyr)", "dir <- system.file(package = \"tableboom\", \"example_script\")",

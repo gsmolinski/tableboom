@@ -26,7 +26,7 @@ inspect_r <- function(path_to_inspect = NULL, path_to_save = NULL) {
 #' @noRd
 check_args <- function(path_to_inspect, path_to_save) {
   if (!is.null(path_to_inspect)) {
-    if (is.na(path_to_inspect) || length(path_to_inspect) > 1 || !is.character(path_to_inspect)) {
+    if (length(path_to_inspect) > 1 || is.na(path_to_inspect) || !is.character(path_to_inspect)) {
       stop("Argument passed to 'path_to_inspect' must be character length 1 or NULL.", call. = FALSE)
     } else if (tools::file_ext(path_to_inspect) != "R") {
       stop("Argument passed to 'path_to_inspect' must be path to file with 'R' extension.", call. = FALSE)
@@ -34,7 +34,7 @@ check_args <- function(path_to_inspect, path_to_save) {
   }
 
   if (!is.null(path_to_save)) {
-    if (is.na(path_to_save) || length(path_to_save) > 1 || !is.character(path_to_save)) {
+    if (length(path_to_save) > 1 || is.na(path_to_save) || !is.character(path_to_save)) {
       stop("Argument passed to 'path_to_save' must be character length 1 or NULL.", call. = FALSE)
     } else if (tools::file_ext(path_to_save) != "html") {
       stop("If path is provided as an argument to 'path_to_save', then extension must be 'html'.", call. = FALSE)
