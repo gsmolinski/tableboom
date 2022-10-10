@@ -10,7 +10,10 @@
 #' break (`\n`). If element was NULL, then returns `""`.
 #' @noRd
 capture_output <- function(parsed_mod_file, parsed_orig_file) {
-  output <- eval_file(parsed_mod_file, parsed_orig_file)
+  output <- callr::r(function(x) {
+    tableboom:::set_options()
+    tableboom:::eval_file(x[[1]], x[[2]])
+    }, args = list(list(parsed_mod_file, parsed_orig_file)))
   output <- lapply(output, remove_after_empty)
   output <- lapply(output, remove_named_fun)
   output <- lapply(output, paste0, collapse = "\n")
@@ -37,7 +40,7 @@ eval_file <- function(parsed_mod_file, parsed_orig_file) {
   output <- vector("list", length(parsed_mod_file))
   for (i in seq_along(parsed_orig_file)) {
     try(eval(parsed_orig_file[[i - 1]], envir = e), silent = TRUE)
-    output[[i]] <- get_output(parsed_mod_file[[i]], envir = e)
+    output[[i]] <- tableboom:::get_output(parsed_mod_file[[i]], envir = e)
   }
   output
 }

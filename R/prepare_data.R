@@ -15,9 +15,6 @@ prepare_data <- function(script_path) {
   parsed_orig_file <- parse(script_path, keep.source = TRUE)
   parse_data_orig_file <- utils::getParseData(parsed_orig_file, includeText = FALSE)
   if (nrow(parse_data_orig_file) > 0) {
-    user_options <- get_user_options()
-    set_options()
-
     exprs_df <- find_exprs(parse_data_orig_file)
     temp_path <- tempfile("tableboom_", fileext = ".R")
     insert_fun(exprs_df, temp_path, script_path)
@@ -25,11 +22,7 @@ prepare_data <- function(script_path) {
 
     prepared_orig_script <- prepare_orig_script(parse_data_orig_file, exprs_df)
 
-    supress_console_output()
     inspected_src_code <- capture_output(parsed_mod_file, parsed_orig_file)
-    restore_console_output()
-
-    restore_options(user_options)
 
     prepared_data <- prepared_orig_script |>
       dplyr::mutate(inspected_src_code = unlist(inspected_src_code, use.names = FALSE))

@@ -2,7 +2,6 @@ script_path <- paste0(system.file(package = "tableboom", "example_script"), "/ex
 
 test_that("'prepare_data' returns correctly prepared
           original source code with inspected output", {
-            skip_if_not(interactive())
   expected <- structure(list(line = c("1", "3", "5", "7\n8\n9", "11\n12\n13",
                                       "15\n16\n17", "19", "21\n22\n23", "25", "27", "29", "31\n32\n33",
                                       "35", "36"), src_code = c("library(dplyr)", "dir <- system.file(package = \"tableboom\", \"example_script\")",
@@ -21,9 +20,10 @@ test_that("'prepare_data' returns correctly prepared
                                                                                                                "'data.frame':\t1 obs. of  1 variable:\n $ y: num 11\n<  >  str(my_df) ",
                                                                                                                "Rows: 1\nColumns: 1\n$ y <dbl> 11")), class = "data.frame", row.names = c(NA,
                                                                                                                                                                                           -14L))
-  obj <- suppressMessages(prepare_data(script_path))
+  obj <- prepare_data(script_path)
   # we don't want to test output for function environment, as the memory address changes constantly
-  expect_identical(obj[-7, ], expected[-7, ])
+  # and we don't want to test path as it can be different depending on if this package is installed and where
+  expect_identical(obj[-c(2, 3, 7), ], expected[-c(2, 3, 7), ])
 })
 
 test_that("'prepare_data' returns error if no parse_data returned for original script", {
