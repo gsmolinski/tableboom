@@ -150,7 +150,7 @@ insert_div <- function(code_output, split_sign) {
 
   code_output <- dplyr::case_when(stringi::stri_detect_regex(code_output, "^\\s*function") ~ paste0("<span class = 'fun_output'>", code_output, "</span>"),
                                   stringi::stri_detect_regex(code_output, "^\\s*Error:") ~ paste0("<span class = 'error_output'>", code_output, "</span>"),
-                                  stringi::stri_detect_regex(code_output, "^\\s*- attr\\(") ~ paste0("<span class = 'attr_output'>", code_output, "</span>"),
+                                  stringi::stri_detect_regex(code_output, "^\\s*-") ~ paste0("<span class = 'attr_output'>", code_output, "</span>"),
                                   stringi::stri_detect_regex(code_output, "^\\s*int|^\\s*\\$.+&lt;int&gt;|^\\s*\\$.+:\\sint\\s") ~ paste0("<span class = 'int_output'>", code_output, "</span>"),
                                   stringi::stri_detect_regex(code_output, "^\\s*dbl|^\\s*\\$.+&lt;dbl&gt;|^\\s*\\$.+:\\sdbl\\s") ~ paste0("<span class = 'dbl_output'>", code_output, "</span>"),
                                   stringi::stri_detect_regex(code_output, "^\\s*num|^\\s*\\$.+&lt;num&gt;|^\\s*\\$.+:\\snum\\s") ~ paste0("<span class = 'num_output'>", code_output, "</span>"),

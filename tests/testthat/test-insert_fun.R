@@ -1,4 +1,4 @@
-script_path <- paste0(system.file(package = "tableboom", "example_script"), "/example_script.R")
+script_path <- file.path(system.file(package = "tableboom", "example_script"), "example_script.R")
 parse_data <- utils::getParseData(parse(script_path, keep.source = TRUE), includeText = TRUE)
 
 test_that("'insert_fun' inserts correct functions to the correct locations

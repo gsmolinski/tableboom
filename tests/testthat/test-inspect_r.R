@@ -1,4 +1,4 @@
-script_path <- paste0(system.file(package = "tableboom", "example_script"), "/example_script.R")
+script_path <- file.path(system.file(package = "tableboom", "example_script"), "example_script.R")
 
 test_that("'inspect_r' saves file when path is passed", {
   temp_path <- tempfile(fileext = ".html")

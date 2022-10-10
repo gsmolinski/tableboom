@@ -1,4 +1,4 @@
-script_path <- paste0(system.file(package = "tableboom", "example_script"), "/example_script.R")
+script_path <- file.path(system.file(package = "tableboom", "example_script"), "example_script.R")
 prepared_data <- prepare_data(script_path)
 
 test_that("'highlight_syntax' returns <span> tags added in correct locations", {

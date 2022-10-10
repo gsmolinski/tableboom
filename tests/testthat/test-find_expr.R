@@ -1,4 +1,4 @@
-path <- paste0(system.file(package = "tableboom", "example_script"), "/example_script.R")
+path <- file.path(system.file(package = "tableboom", "example_script"), "example_script.R")
 parse_data <- utils::getParseData(parse(path, keep.source = TRUE), includeText = TRUE)
 
 test_that("'find_var_calls' returns correct lines where var is calling", {

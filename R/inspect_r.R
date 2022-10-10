@@ -1,3 +1,21 @@
+#' Inspect Intermediate Steps of Calls in R Script
+#'
+#' All calls are inspected in the chosen R script, i.e. output of intermediate
+#' steps is displayed as a HTML table which can be optionally saved as `html` file.
+#'
+#' @param path_to_inspect path to R script which should be inspected. If `NULL` (default)
+#' active file in RStudio will be used. If not `NULL`, `.R` file extension must be used.
+#' @param path_to_save where to save HTML table? If `NULL` (default) table is not saved
+#' and only displayed in the Viewer. If not `NULL`, `.html` file extension must be used.
+#'
+#' @return
+#' HTML table and - optionally - HTML table saved as a side effect.
+#' @details
+#' Calls are inspected using [boomer::boom] or [dplyr::glimpse].
+#' @export
+#' @import gt
+#' @examples
+#' inspect_r(file.path(system.file(package = "tableboom", "table_contest_2022"), "script_to_inspect.R"))
 inspect_r <- function(path_to_inspect = NULL, path_to_save = NULL) {
   check_args(path_to_inspect, path_to_save)
   if (is.null(path_to_inspect)) {

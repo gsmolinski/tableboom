@@ -1,4 +1,4 @@
-script_path <- paste0(system.file(package = "tableboom", "example_script"), "/example_script.R")
+script_path <- file.path(system.file(package = "tableboom", "example_script"), "example_script.R")
 
 test_that("'prepare_data' returns correctly prepared
           original source code with inspected output", {
