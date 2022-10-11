@@ -96,7 +96,7 @@
 }
 
 .dbl_output {
- border-left: 6px groove #b9d7d9;
+ border-left: 6px groove #d2bc99;
 }
 
 .num_output {
@@ -108,9 +108,9 @@
 }
 
 .logi_output {
-  border-left: 6px groove #feb7ec;
+  border-left: 6px groove #BDE4FF;
 }
 
 .cplx_output {
-  border-left: 6px groove #99ffff;
+  border-left: 6px groove #CCFFFF;
 }
