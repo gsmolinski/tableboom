@@ -138,8 +138,6 @@ clean_output <- function(code_output, split_sign) {
 #' and background color for the whole block of output.
 #' @noRd
 insert_div <- function(code_output, split_sign) {
-  code_output <- paste0("<div class = 'output_whole'>", code_output, "</div>")
-
   code_output <- code_output |>
     stringi::stri_split_fixed(split_sign) |>
     unlist(use.names = FALSE)
@@ -151,15 +149,16 @@ insert_div <- function(code_output, split_sign) {
   code_output <- dplyr::case_when(stringi::stri_detect_regex(code_output, "^\\s*function") ~ paste0("<span class = 'fun_output'>", code_output, "</span>"),
                                   stringi::stri_detect_regex(code_output, "^\\s*Error:") ~ paste0("<span class = 'error_output'>", code_output, "</span>"),
                                   stringi::stri_detect_regex(code_output, "^\\s*-") ~ paste0("<span class = 'attr_output'>", code_output, "</span>"),
-                                  stringi::stri_detect_regex(code_output, "^\\s*int|^\\s*\\$.+&lt;int&gt;|^\\s*\\$.+:\\sint\\s") ~ paste0("<span class = 'int_output'>", code_output, "</span>"),
-                                  stringi::stri_detect_regex(code_output, "^\\s*dbl|^\\s*\\$.+&lt;dbl&gt;|^\\s*\\$.+:\\sdbl\\s") ~ paste0("<span class = 'dbl_output'>", code_output, "</span>"),
-                                  stringi::stri_detect_regex(code_output, "^\\s*num|^\\s*\\$.+&lt;num&gt;|^\\s*\\$.+:\\snum\\s") ~ paste0("<span class = 'num_output'>", code_output, "</span>"),
-                                  stringi::stri_detect_regex(code_output, "^\\s*chr|^\\s*\\$.+&lt;chr&gt;|^\\s*\\$.+:\\schr\\s") ~ paste0("<span class = 'chr_output'>", code_output, "</span>"),
-                                  stringi::stri_detect_regex(code_output, "^\\s*logi|^\\s*\\$.+&lt;logi&gt;|^\\s*\\$.+:\\slogi\\s") ~ paste0("<span class = 'logi_output'>", code_output, "</span>"),
-                                  stringi::stri_detect_regex(code_output, "^\\s*cplx|^\\s*\\$.+&lt;cplx&gt;|^\\s*\\$.+:\\scplx\\s") ~ paste0("<span class = 'cplx_output'>", code_output, "</span>"),
+                                  stringi::stri_detect_regex(code_output, "^\\s*int|^\\s*\\$.+&lt;int&gt;|^\\s*\\$.+:\\sint\\s|^\\s*Named\\sint\\s") ~ paste0("<span class = 'int_output'>", code_output, "</span>"),
+                                  stringi::stri_detect_regex(code_output, "^\\s*dbl|^\\s*\\$.+&lt;dbl&gt;|^\\s*\\$.+:\\sdbl\\s|^\\s*Named\\sdbl\\s") ~ paste0("<span class = 'dbl_output'>", code_output, "</span>"),
+                                  stringi::stri_detect_regex(code_output, "^\\s*num|^\\s*\\$.+&lt;num&gt;|^\\s*\\$.+:\\snum\\s|^\\s*Named\\snum\\s") ~ paste0("<span class = 'num_output'>", code_output, "</span>"),
+                                  stringi::stri_detect_regex(code_output, "^\\s*chr|^\\s*\\$.+&lt;chr&gt;|^\\s*\\$.+:\\schr\\s|^\\s*Named\\schr\\s") ~ paste0("<span class = 'chr_output'>", code_output, "</span>"),
+                                  stringi::stri_detect_regex(code_output, "^\\s*logi|^\\s*\\$.+&lt;logi&gt;|^\\s*\\$.+:\\slogi\\s|^\\s*Named\\slogi\\s") ~ paste0("<span class = 'logi_output'>", code_output, "</span>"),
+                                  stringi::stri_detect_regex(code_output, "^\\s*cplx|^\\s*\\$.+&lt;cplx&gt;|^\\s*\\$.+:\\scplx\\s|^\\s*Named\\scplx\\s") ~ paste0("<span class = 'cplx_output'>", code_output, "</span>"),
                                   TRUE ~ code_output)
 
 
   code_output <- paste0(code_output, collapse = split_sign)
+  code_output <- paste0("<div class = 'output_whole'>", code_output, "</div>")
   code_output
 }

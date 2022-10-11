@@ -1,7 +1,7 @@
 library(dplyr)
 
 path <- file.path(system.file(package = "tableboom","table_contest_2022", "inner_script"),
-                          "inner_script.R")
+                          "eurostat_data.R")
 
 source(path) # get data - children (below 18) from Ukraine which found temporary protection in EU countries
 
@@ -15,4 +15,16 @@ child_ukr_prot <- child_ukr_prot |>
   mutate(across(matches("\\d$"), \(e) if_else(e == ":", NA_character_, e)),
          across(matches("\\d$"), as.integer))
 
+total_months <- colSums(child_ukr_prot[, 2:ncol(child_ukr_prot)], na.rm = TRUE)
 
+maxs <- vector("integer", ncol(child_ukr_prot) - 1)
+
+for (i in 2:(ncol(child_ukr_prot))) {
+  maxs[[i - 1]] <- max(child_ukr_prot[[i]], na.rm = TRUE)
+}
+
+maxs
+
+format(sum(total_months), big.mark = " ")
+
+path()
