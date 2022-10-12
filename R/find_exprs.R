@@ -25,7 +25,7 @@ find_exprs <- function(parse_data) {
   }
 
   other_exprs <- parse_data |>
-    dplyr::filter(.data$parent == 0) |>
+    dplyr::filter(.data$parent == 0 & .data$token == "expr") |>
     dplyr::select(.data$line1, .data$line2, .data$col2, .data$id) |>
     dplyr::mutate(fun = "boomer::boom")
 
@@ -57,7 +57,7 @@ find_exprs <- function(parse_data) {
 #' @noRd
 find_var_calls <- function(parse_data) {
   var_calls <- parse_data |>
-    dplyr::mutate(var_call = dplyr::if_else(.data$parent == 0 & dplyr::lead(.data$parent, default = 0) == 0, TRUE, FALSE)) |>
+    dplyr::mutate(var_call = dplyr::if_else(.data$parent == 0 & .data$token == "expr" & dplyr::lead(.data$parent, default = 0) == 0, TRUE, FALSE)) |>
     dplyr::filter(.data$var_call) |>
     dplyr::select(.data$line1, .data$line2, .data$col2, .data$id) |>
     dplyr::mutate(fun = "dplyr::glimpse")
