@@ -45,5 +45,5 @@ test_that("'prepare_orig_script' returns correctly prepared original source code
                                                                 "my_df <- my_df %>%\n  mutate(y = mean(my_vec)) %>%\n  select(y)",
                                                                 "str(my_df)", "my_df")), class = "data.frame", row.names = c(NA,
                                                                                                                              -14L))
-  expect_identical(prepare_orig_script(parse_data, exprs_df), expected)
+  expect_identical(prepare_orig_script(script_path, exprs_df), expected)
 })

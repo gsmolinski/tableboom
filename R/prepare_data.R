@@ -20,7 +20,7 @@ prepare_data <- function(script_path) {
     insert_fun(exprs_df, temp_path, script_path)
     parsed_mod_file <- parse(temp_path, keep.source = TRUE)
 
-    prepared_orig_script <- prepare_orig_script(parse_data_orig_file, exprs_df)
+    prepared_orig_script <- prepare_orig_script(script_path, exprs_df)
 
     inspected_src_code <- capture_output(parsed_mod_file, parsed_orig_file)
 
@@ -33,9 +33,9 @@ prepare_data <- function(script_path) {
   }
 }
 
-#' Get Expression Using `utils::getParseText()`
+#' Get Original Script With Lines Number
 #'
-#' @param parse_data data returned by `utils::getParseData()` which was used on original script.
+#' @param script_path - path to original script, i.e. script which will be inspected.
 #' @param exprs_df returned by `find_exprs`, i.e. list of exprs found in original script, as well
 #' as line1, line2, id and fun to inspect (`dplyr::glimpse` or `boomer::boom`)
 #'
@@ -45,13 +45,26 @@ prepare_data <- function(script_path) {
 #' - src_code - source code as a character vector (separated by `\n`)
 #' Each row correspondents to each expression from original script.
 #' @noRd
-prepare_orig_script <- function(parse_data, exprs_df) {
+prepare_orig_script <- function(script_path, exprs_df) {
   line <- seq_vectorized(from = exprs_df$line1, to = exprs_df$line2)
-  line <- vapply(line, paste0, FUN.VALUE = character(1), collapse = "\n")
-  src_code <- vapply(exprs_df$id, function(e) utils::getParseText(parse_data, e), FUN.VALUE = character(1))
+  line_chr <- vapply(line, paste0, FUN.VALUE = character(1), collapse = "\n")
+  src_code <- readLines(script_path)
+  src_code <- unlist(lapply(line, collapse_src_code, src_code = src_code), use.names = FALSE)
 
-  data.frame(line = line,
-                 src_code = src_code)
+  data.frame(line = line_chr,
+             src_code = src_code)
+}
+
+#' Collapse Source Code Which Belongs to the Same Expr
+#'
+#' @param lines numeric vector - lines to take from src_code.
+#' @param src_code script returned by `readLines`.
+#'
+#' @return
+#' character vector length 1 - source code collapse using `\n`.
+#' @noRd
+collapse_src_code <- function(lines, src_code) {
+  paste0(src_code[lines], collapse = "\n")
 }
 
 # vectorized version of seq
