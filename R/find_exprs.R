@@ -9,6 +9,7 @@
 #' @return
 #' data.frame with 4 columns:
 #' - line1 - line where expr starts
+#' - col1 - exactly location in string where expr starts
 #' - line2 - line where expr ends
 #' - col2 - exactly location in string where expr ends (useful if there is a comment after expr)
 #' - id - id of expr from `utils::getParseData()`
@@ -26,7 +27,7 @@ find_exprs <- function(parse_data) {
 
   other_exprs <- parse_data |>
     dplyr::filter(.data$parent == 0 & .data$token == "expr") |>
-    dplyr::select(.data$line1, .data$line2, .data$col2, .data$id) |>
+    dplyr::select(.data$line1, .data$col1, .data$line2, .data$col2, .data$id) |>
     dplyr::mutate(fun = "boomer::boom")
 
   exprs <- dplyr::bind_rows(var_calls, other_exprs)
@@ -45,8 +46,9 @@ find_exprs <- function(parse_data) {
 #' @return
 #' data.frame with 3 columns:
 #' - line1 - line where expr starts
+#' - col1 - exactly location in string where expr starts
 #' - line2 - line where expr ends
-#' - col2 - exactly location in string where expr ends (useful if there is a comment after expr)
+#' - col2 - exactly location in string where expr ends
 #' - id - id of expr
 #' - fun - name of function (with namespace) to use on the expr,
 #' because it is var call, we use `dplyr::glimpse`.
@@ -59,7 +61,7 @@ find_var_calls <- function(parse_data) {
   var_calls <- parse_data |>
     dplyr::mutate(var_call = dplyr::if_else(.data$parent == 0 & .data$token == "expr" & dplyr::lead(.data$parent, default = 0) == 0, TRUE, FALSE)) |>
     dplyr::filter(.data$var_call) |>
-    dplyr::select(.data$line1, .data$line2, .data$col2, .data$id) |>
+    dplyr::select(.data$line1, .data$col1, .data$line2, .data$col2, .data$id) |>
     dplyr::mutate(fun = "dplyr::glimpse")
 
   var_calls
