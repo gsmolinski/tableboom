@@ -1,0 +1,93 @@
+---
+title: "Treating Code As Data - Notes"
+output: 
+  rmarkdown::html_vignette:
+    code_folding: hide
+vignette: >
+  %\VignetteIndexEntry{Treating Code As Data - Notes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = ""
+)
+```
+
+```{r setup}
+options(boomer.safe_print = TRUE)
+```
+
+## Intention
+
+This document is an attempt to reproduce the main steps taken during work on the `{tableboom}` package. I hope it will be useful for myself in the future, but also for any reader interested in metaprogramming. Unfortunately, perhaps the most interesting is everything what happens not in the `{tableboom}` package, but `{boomer}`, because there is a core algorithm used to inspect calls. Saying that, please be noted that presented vignette focus only on things *before* and *after* the call is closed in `boomer::boom()` function, not *inside*. As the main difference between `{tableboom}` and `{boomer}` is that the former makes it possible to inspect whole R script (i.e. all *top* calls in script) and the latter assumes that user will manually point to the chosen call by wrapping it into `boomer::boom()` function, I focus on the problem: how to automatically wrap all calls in some function?
+
+## Expression
+
+```{r path_to_script}
+path_to_script <- file.path(system.file(package = "tableboom", "vignette_helpers"),
+                            "script_code_as_data.R")
+```
+
+Let's take the script below as an example (with traps!):
+
+
+```{r script_code_as_data_showed, echo = FALSE}
+cat(paste0(readLines(path_to_script), collapse = "\n"))
+
+```
+
+And the mentioned traps are:
+
+- comment in their own line
+- comment in the same line as call
+- two calls in the same line, separated by semicolon
+
+Although in theory we could treat the *words* in the script as text (and read it using e.g. `readLines()`), that won't take us too far (because source code is not just a words). Instead, we can use `getParseData()` to find calls we need. This function needs an object which contains `srcref` attribute and that can be a function (if sourced keeping `srcref`, so when e.g. function in script is sourced using `Ctrl + Shift + Enter` in RStudio IDE on Windows OS, not just `Ctrl + Enter`) or an object returned by `parse()`.
+
+```{r attributed_parse_data}
+attributes(parse(path_to_script, keep.source = TRUE))
+```
+
+Now, `getParseData()` returns a table with precise information about each element in source code.
+
+```{r parse_data}
+getParseData(parse(path_to_script, keep.source = TRUE)) |> 
+  kableExtra::kable(row.names = FALSE) |> 
+  kableExtra::kable_paper()
+```
+
+From this table, we would like to retrieve information about `expr` token. `expr` stands for expression and we can say that expression is a *complex text*:
+
+>An expression is any member of the set of base types created by parsing code: constant scalars, symbols, call objects, and pairlists.^[Wickham, Hadley. *Advanced R. Second Edition*, chapter 18.3.]
+
+This is not visible in the table above, because the `text` is hidden for the `expr` by default, but we can override this.
+
+```{r pase_data_text_for_expr}
+getParseData(parse(path_to_script, keep.source = TRUE), includeText = TRUE) |> 
+  head(20) |> 
+  kableExtra::kable(row.names = FALSE) |> 
+  kableExtra::kable_paper()
+
+```
+Expression is built by different base types created by parsing code *and* by expressions, i.e. in the script expression can belong to other expression(s). `{boomer}` gives us possibility to inspect intermediate steps of *call* - call is a function call (usage). Thus we could say that all we need is to find the *top* expression, which is true, but what about this difference between *expression* and *call*? Do we need to care about this? Actually, yes.
+
+Taking as granted information from `{boomer}` description, we need to remember that with `boomer::boom()` we can inspect a *call* and as we saw in the table above, `expr` can be an expression and doesn't contain a call:
+
+```{r}
+getParseData(parse(path_to_script, keep.source = TRUE), includeText = TRUE)[52:55, ] |> 
+  kableExtra::kable(row.names = FALSE) |> 
+  kableExtra::kable_paper()
+```
+
+`my_df` is a non-nested expression (value from `parent` column is equal to 0) and it is just a `SYMBOL`, not `SYMBOL_FUNCTION_CALL` (`SYMBOL_FUNCTION_CALL` is a *call*) - `boomer::boom()` does not work if there is no call at all:
+
+```{r boom_call_not_call, class.source = "fold-show"}
+boomer::boom(1, print = dplyr::glimpse)
+boomer::boom(c(1), print = dplyr::glimpse)
+identical(1, c(1))
+```
+
+
