@@ -3,7 +3,7 @@ library(dplyr)
 path <- file.path(system.file(package = "tableboom","table_contest_2022", "inner_script"),
                           "eurostat_data.R")
 # test this
-source(path) # data - children (< 18) from Ukraine which found temp protection in EU
+source(path) # data - children (< 18) from Ukraine which found temp protection
 
 names(child_ukr_prot) <- c("country", "march_2022", "april_2022",
                            "may_2022","june_2022", "july_2022", "august_2022")

@@ -48,7 +48,7 @@ prepare_data <- function(script_path) {
 prepare_orig_script <- function(script_path, exprs_df) {
   line <- seq_vectorized(from = exprs_df$line1, to = exprs_df$line2)
   line_chr <- vapply(line, paste0, FUN.VALUE = character(1), collapse = "\n")
-  src_code <- readLines(script_path)
+  src_code <- readLines(script_path, warn = FALSE)
   src_code <- unlist(lapply(line, collapse_src_code, src_code = src_code), use.names = FALSE)
 
   data.frame(line = line_chr,

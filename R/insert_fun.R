@@ -17,7 +17,7 @@
 #' what we have modified so far and how the location changed.
 #' @noRd
 insert_fun <- function(exprs_df, temp_path, script_path) {
-  file <- readLines(script_path)
+  file <- readLines(script_path, warn = FALSE)
   file_orig <- file
   for (i in seq_along(rownames(exprs_df))) {
 

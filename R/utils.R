@@ -74,5 +74,5 @@ restore_options <- function(user_options) {
 #' use styles in separate css file.
 #' @noRd
 add_css <- function() {
-  paste0(readLines(file.path(system.file(package = "tableboom", "www"), "tableboomstyle.css")), collapse = " ")
+  paste0(readLines(file.path(system.file(package = "tableboom", "www"), "tableboomstyle.css"), warn = FALSE), collapse = " ")
 }
