@@ -28,7 +28,7 @@ stylize_table <- function(table) {
 
 ## Intention
 
-This document is an attempt to reproduce the main steps taken during work on the `{tableboom}` package. I hope it will be useful for myself in the future, but also for any reader interested in metaprogramming. Unfortunately, perhaps the most interesting is everything what happens not in the `{tableboom}` package, but `{boomer}`, because there is a core algorithm used to inspect calls. Saying that, please be noted that presented vignette focus only on things *before* and *after* the call is closed in `boomer::boom()` function, not *inside*. As the main difference between `{tableboom}` and `{boomer}` is that the former makes it possible to inspect whole R script (i.e. all *top* calls in script) and the latter assumes that user will manually point to the chosen call by wrapping it into `boomer::boom()` function, I focus on the problem: how to automatically wrap all calls in some function?
+This document is an attempt to reproduce the main steps taken during work on the `{tableboom}` package. I hope it will be useful for myself in the future, but also for any reader interested in metaprogramming. Unfortunately, perhaps the most interesting is everything what happens not in the `{tableboom}` package, but `{boomer}`^[Fabri A (2021). _boomer: Debugging Tools to Inspect the Intermediate Steps of a Call_. R package version 0.1.0, <https://CRAN.R-project.org/package=boomer>.], because there is a core algorithm used to inspect calls. Saying that, please be noted that presented vignette focus only on things *before* and *after* the call is closed in `boomer::boom()` function, not *inside*. As the main difference between `{tableboom}` and `{boomer}` is that the former makes it possible to inspect whole R script (i.e. all *top* calls in script) and the latter assumes that user will manually point to the chosen call by wrapping it into `boomer::boom()` function, I focus on the problem: how to automatically wrap all calls in some function?
 
 ## Expression
 
@@ -67,7 +67,7 @@ getParseData(parse(path_to_script, keep.source = TRUE)) |>
 
 From this table, we would like to retrieve information about `expr` token. `expr` stands for expression and we can say that expression is a *complex text*:
 
->An expression is any member of the set of base types created by parsing code: constant scalars, symbols, call objects, and pairlists.^[Wickham, Hadley. *Advanced R. Second Edition*, chapter 18.3.]
+>An expression is any member of the set of base types created by parsing code: constant scalars, symbols, call objects, and pairlists.^[Wickham H. [*Advanced R. Second Edition*](https://adv-r.hadley.nz/), [chapter 18.3.](https://adv-r.hadley.nz/expressions.html#expression-details).]
 
 This is not visible in the table above, because the `text` is hidden for the `expr` by default, but we can override this.
 
@@ -94,7 +94,7 @@ boomer::boom(c(1), print = dplyr::glimpse)
 identical(1, c(1))
 ```
 
-The output is different and in the first case `1` is just printed, not inspected. This is true even that we all know there is no practical difference between `1` and `c(1)`. The consequence is that if something is not a call, we need something different than `boomer::boom()` - luckily we can use directly the function passed as a argument to the `boomer::boom()` above, i.e. `dplyr::glimpse()`.
+The output is different and in the first case `1` is just printed, not inspected. This is true even that we all know there is no practical difference between `1` and `c(1)`. The consequence is that if something is not a call, we need something different than `boomer::boom()` - luckily we can use directly the function passed as a argument to the `boomer::boom()` above, i.e. `glimpse()` from `{dplyr}` package^[Wickham H, François R, Henry L, Müller K (2022). _dplyr: A Grammar of Data Manipulation_. R package version 1.0.10, <https://CRAN.R-project.org/package=dplyr>.].
 
 ```{r dplyr_glimpse_for_not_call, class.source = "fold-show"}
 dplyr::glimpse(1)
@@ -190,5 +190,33 @@ eval(quote(library(tableboom)), envir = new.env())
 detach(package:tableboom)
 "package:tableboom" %in% search()
 ```
+
+Although we have used new environment, search path has been affected. The safest way to evaluate expression would be to do it in separate R session - we can do this using `{callr}` package^[Csárdi G, Chang W (2022). _callr: Call R from R_. R package version 3.7.2, <https://CRAN.R-project.org/package=callr>.].
+
+```{r eval_library_callr, class.source = "fold-show"}
+"package:tableboom" %in% search()
+# code below will return result from `search()` call, so we can see
+# that {tableboom} is present in separate R session
+callr::r(function() eval(quote(library(tableboom))))
+"package:tableboom" %in% search() # but is not present in our session
+```
+
+At the end of this chapter, let's make something a little more complicated and convincing that indeed `{callr}` performs excellent for our purposes - we will use some function from `{dplyr}` which would not run (error will occur) if `{dplyr}` is not loaded.
+
+```{r call_r_dplyr_example, class.source = "fold-show"}
+"package:dplyr" %in% search() # dplyr is not loaded
+tryCatch(mutate(data.frame(a = 1), new_col = "new"),
+         error = function(e) "Error occured") # error, because can't find `mutate()` function
+
+callr::r(function() {
+  invisible(library(dplyr))
+  mutate(data.frame(a = 1), new_col = "new")
+  }
+) # data.frame is returned correctly
+
+"package:dplyr" %in% search() # dplyr is still not loaded
+```
+
+## Summary
 
 
