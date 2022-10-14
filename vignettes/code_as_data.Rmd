@@ -2,6 +2,7 @@
 title: "Treating Code As Data - Notes"
 output: 
   rmarkdown::html_vignette:
+    toc: true
     code_folding: hide
 vignette: >
   %\VignetteIndexEntry{Treating Code As Data - Notes}
@@ -18,6 +19,11 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 options(boomer.safe_print = TRUE)
+
+stylize_table <- function(table) {
+  kableExtra::kable(table, row.names = FALSE) |> 
+    kableExtra::kable_paper()
+}
 ```
 
 ## Intention
@@ -68,18 +74,16 @@ This is not visible in the table above, because the `text` is hidden for the `ex
 ```{r pase_data_text_for_expr}
 getParseData(parse(path_to_script, keep.source = TRUE), includeText = TRUE) |> 
   head(20) |> 
-  kableExtra::kable(row.names = FALSE) |> 
-  kableExtra::kable_paper()
+  stylize_table()
 
 ```
-Expression is built by different base types created by parsing code *and* by expressions, i.e. in the script expression can belong to other expression(s). `{boomer}` gives us possibility to inspect intermediate steps of *call* - call is a function call (usage). Thus we could say that all we need is to find the *top* expression, which is true, but what about this difference between *expression* and *call*? Do we need to care about this? Actually, yes.
+Expression is built by different base types created by parsing code *and* by expressions, i.e. in the script, expression can belong to other expression(s). `{boomer}` gives us possibility to inspect intermediate steps of *call* - call is a function call (usage). Thus we could say that all we need is to find the *top* expression, which is true, but what about this difference between *expression* and *call*? Do we need to care about this? Actually, yes.
 
 Taking as granted information from `{boomer}` description, we need to remember that with `boomer::boom()` we can inspect a *call* and as we saw in the table above, `expr` can be an expression and doesn't contain a call:
 
 ```{r}
 getParseData(parse(path_to_script, keep.source = TRUE), includeText = TRUE)[52:55, ] |> 
-  kableExtra::kable(row.names = FALSE) |> 
-  kableExtra::kable_paper()
+  stylize_table()
 ```
 
 `my_df` is a non-nested expression (value from `parent` column is equal to 0) and it is just a `SYMBOL`, not `SYMBOL_FUNCTION_CALL` (`SYMBOL_FUNCTION_CALL` is a *call*) - `boomer::boom()` does not work if there is no call at all:
@@ -88,6 +92,103 @@ getParseData(parse(path_to_script, keep.source = TRUE), includeText = TRUE)[52:5
 boomer::boom(1, print = dplyr::glimpse)
 boomer::boom(c(1), print = dplyr::glimpse)
 identical(1, c(1))
+```
+
+The output is different and in the first case `1` is just printed, not inspected. This is true even that we all know there is no practical difference between `1` and `c(1)`. The consequence is that if something is not a call, we need something different than `boomer::boom()` - luckily we can use directly the function passed as a argument to the `boomer::boom()` above, i.e. `dplyr::glimpse()`.
+
+```{r dplyr_glimpse_for_not_call, class.source = "fold-show"}
+dplyr::glimpse(1)
+```
+
+To differentiate between a call and any other item, we can check if after expression (i.e. in the next row) is an `expr` token with parent equal to 0 or not. If not, then we have a call. Our aim is to construct a `data.frame` with information about `expr` having 0 as parent (i.e. not nested expressions); we could end up with the result as below^[In the code block we use triple colon to get function which exists in the package, but is not exported, i.e. not intended to be usable directly by package user.]:
+
+```{r expr_retrieved}
+parse_data <- getParseData(parse(path_to_script, keep.source = TRUE))
+tableboom:::find_exprs(parse_data) |> 
+  stylize_table()
+```
+
+## Script modification
+
+We already know where and what to put in the script to modify it (this information was retrieved at the end of previous chapter). To summarize it: we want to add some function (`boomer::boom()` or `dplyr::glimpse()`) to the *top* expression.
+
+In the simplest, but naive approach, we could use information about the starting line (column `line1`), end line (column `line2`) and function to use (column `fun`) and just paste everything (at the beginning of the line it would be e.g. `"boomer::boom(`" and at the end of line closing bracket - `")"`). However, problems occur if there is a comment after the expression (so we would paste closing bracket to the end of comment, not expression) or in one line is more than one call (separated by semicolon) - the problem in this case will be the same as with the comment after expression. These problems exists, because on the one hand we talk about expressions as a language elements and on the other hand about the text file where the expressions exist (so we treat source code as a *text* in this case).
+
+Additionally to the information about starting and ending line, we know also where exactly is the first character of expression (`col1`) and last character (`col2`). Thus we can imagine the following steps:
+
+- read original script using `readLines()` (some alternative might be `getParseText()`, but this is not 1:1 replacement!)
+- use table returned by `tableboom:::find_exprs()` to get information about starting line, first character, ending line, last character to insert function to the correct location
+- after first modification (first inserted character, e.g. function name with opening bracket), check how the line (which should be modified next) changed - if it was changed indeed one or more times, that means some characters were already added to this line and thus value in `col1` or `col2` must be shifted accordingly
+- save the modified script
+
+These steps in the form of function could look like this:
+
+```{r insert_fun_definition, class.source = "fold-show"}
+tableboom:::insert_fun
+
+```
+
+And the modified script would look like this:
+
+```{r modified_script_created}
+top_exprs <- tableboom:::find_exprs(parse_data)
+temp_path <- tempfile(fileext = ".R")
+tableboom:::insert_fun(top_exprs, temp_path, path_to_script)
+```
+
+```{r modified_script_showed, echo = FALSE}
+cat(paste0(readLines(temp_path), collapse = "\n"))
+```
+
+## Evaluation
+
+Evaluation is - for our purposes - the same as executing code. We have used `parse()` many times before - it returns all *top* expressions (when script is passed to the `parse()`) in the form of list. This list can be subset to get nested expressions or simpler elements. The length of this list is a number of *top* expressions - it doesn't contain e.g. comments.
+
+Having modified script, we need now to read it, *run* the code and capture output (i.e. output from `boomer::boom()` or `dplyr::glimpse()`). And because we are dealing now with language element rather than text, we won't use `readLines()` but - of course - `parse()`.
+
+`eval()` function is responsible to perform evaluation and before we move into our case, it may be justified to show the usage on simpler example:
+
+```{r eval_simple_example, class.source = "fold-show"}
+parse(text = "2 + 2") # expression before evaluation, see also expression() or quote()
+typeof(parse(text = "2 + 2")) # expression type
+eval(parse(text = "2 + 2")) # evaluation
+```
+
+Often it may be safer to evaluate expression in different environment, especially if we don't know how the expression will affect the default environment - evaluation can e.g. define variable and if a variable of the same name already exists in *our* environment, this will be side effect we most likely don't want:
+
+```{r eval_custom_environment_example, class.source = "fold-show"}
+a <- 3
+eval(parse(text = "a <- 2 + 2"))
+a
+
+a <- 3
+e <- new.env()
+eval(parse(text = "a <- 2 + 2"), envir = e)
+a
+e$a
+```
+
+One could think the alternative for `parse()` and `eval()` would be simply `source()`, but we want to evaluate each expression one by one to be able to capture output for each expression. We also want to do two additional things:
+
+- before we evaluate some expression from modified script, we will evaluate previous expression from original script, because `boomer::boom()` do not affect environment, i.e. if we use `boomer::boom(a <- 2)`, variable `a` won't be defined. And if *next* expression needs variable `a`, we would end up with the error saying that `a` does not exist
+- if evaluation of some expression returns error, we want to continue and evaluate next expressions and to be able to do this, we need to catch the error - we use for this `try` to silently return error and do not stop
+
+```{r eval_functions_tableboom, class.source = "fold-show"}
+tableboom:::get_output # just a helper function
+
+tableboom:::eval_file # main function to eval original and modified script
+```
+
+To capture the output, `capture.output` is used and then modified a little as well (some not important parts of the output are removed). All of this gives us access to the original source code and the output from modified source code which we can now combine as we want, e.g. in the form of table, where one row contains original code (expression) and the second row contains output from inspected function for the same expression.
+
+Dealing with the data we don't know upfront is always risky and that's true also when the code is a data - many things may happen and it is very hard to anticipate everything. Although we have talked about the way to avoid side effects when evaluating expression (using separate environment), in the script we can find many different things for which using new environment won't be enough (e.g. `<<-` or `library()` call):
+
+```{r eval_library_call, class.source = "fold-show"}
+"package:tableboom" %in% search()
+eval(quote(library(tableboom)), envir = new.env())
+"package:tableboom" %in% search()
+detach(package:tableboom)
+"package:tableboom" %in% search()
 ```
 
 

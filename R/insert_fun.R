@@ -10,7 +10,7 @@
 #' Used for side effect - adds inspect function to the source code and writes
 #' this modified source code to the temporary location.
 #' @details
-#' We want to add code to exact location, becuse expression can end with comment or
+#' We want to add code to exact location, because expression can end with comment or
 #' in one line can be many expressions separated by `;`. In these cases we can't
 #' just add something to the beginning of line (like fun with opened bracket) and
 #' something to the end of line (like closed bracket), we need to analyze step-by-step
