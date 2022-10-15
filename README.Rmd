@@ -55,9 +55,4 @@ path <- file.path(system.file(package = "tableboom", "table_contest_2022"), "chi
 tableboom::inspect_r(path)
 ```
 
-```{r image_tableboom, echo = FALSE}
-tableboom_example_path <- file.path(system.file(package = "tableboom", "help"),
-                                    "figures", "README-tableboom.png")
-knitr::include_graphics(tableboom_example_path)
-```
-
+![HTML table returned by `tableboom::inspect_r()`](inst/figures/README-tableboom.png)
