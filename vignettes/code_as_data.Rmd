@@ -37,7 +37,7 @@ path_to_script <- file.path(system.file(package = "tableboom", "vignette_helpers
                             "script_code_as_data.R")
 ```
 
-Let's take the script below as an example (with traps!):
+Let's take the script below as an example (with some traps!):
 
 
 ```{r script_code_as_data_showed, echo = FALSE}
@@ -51,7 +51,7 @@ And the mentioned traps are:
 - comment in the same line as call
 - two calls in the same line, separated by semicolon
 
-Although in theory we could treat the *words* in the script as text (and read it using e.g. `readLines()`), that won't take us too far (because source code is not just a words). Instead, we can use `getParseData()` to find calls we need. This function needs an object which contains `srcref` attribute and that can be a function (if sourced keeping `srcref`, so when e.g. function in script is sourced using `Ctrl + Shift + Enter` in RStudio IDE on Windows OS, not just `Ctrl + Enter`) or an object returned by `parse()`.
+Although in theory we could treat the *words* in the script as text (and read it using e.g. `readLines()`), that won't take us too far (because source code is not just a words). Instead, we can use `getParseData()` to find calls we need. This function needs an object which contains `srcref` attribute and that can be a function (if sourced keeping `srcref`, so when e.g. function in the script is sourced using `Ctrl + Shift + Enter` in RStudio IDE on Windows OS, not just `Ctrl + Enter`) or an object returned by `parse()`.
 
 ```{r attributed_parse_data}
 attributes(parse(path_to_script, keep.source = TRUE))
@@ -61,15 +61,14 @@ Now, `getParseData()` returns a table with precise information about each elemen
 
 ```{r parse_data}
 getParseData(parse(path_to_script, keep.source = TRUE)) |> 
-  kableExtra::kable(row.names = FALSE) |> 
-  kableExtra::kable_paper()
+ stylize_table()
 ```
 
 From this table, we would like to retrieve information about `expr` token. `expr` stands for expression and we can say that expression is a *complex text*:
 
 >An expression is any member of the set of base types created by parsing code: constant scalars, symbols, call objects, and pairlists.^[Wickham H. [*Advanced R. Second Edition*](https://adv-r.hadley.nz/), [chapter 18.3.](https://adv-r.hadley.nz/expressions.html#expression-details).]
 
-This is not visible in the table above, because the `text` is hidden for the `expr` by default, but we can override this.
+This is not visible in the table above, because the `text` (value in the `text` column) is hidden for the `expr` by default, but we can override this.
 
 ```{r pase_data_text_for_expr}
 getParseData(parse(path_to_script, keep.source = TRUE), includeText = TRUE) |> 
@@ -100,7 +99,9 @@ The output is different and in the first case `1` is just printed, not inspected
 dplyr::glimpse(1)
 ```
 
-To differentiate between a call and any other item, we can check if after expression (i.e. in the next row) is an `expr` token with parent equal to 0 or not. If not, then we have a call. Our aim is to construct a `data.frame` with information about `expr` having 0 as parent (i.e. not nested expressions); we could end up with the result as below^[In the code block we use triple colon to get function which exists in the package, but is not exported, i.e. not intended to be usable directly by package user.]:
+To differentiate between a call and any other item, we can check if after expression (i.e. in the next row) is an `expr` token with parent equal to 0 or not. If not, then we have a call.
+
+Our aim is to construct a `data.frame` with information about `expr` having 0 as parent (i.e. not nested expressions); we could end up with the result as below^[In the code block we use triple colon to get function which exists in the package, but is not exported, i.e. not intended to be usable directly by package user.]:
 
 ```{r expr_retrieved}
 parse_data <- getParseData(parse(path_to_script, keep.source = TRUE))
@@ -114,11 +115,11 @@ We already know where and what to put in the script to modify it (this informati
 
 In the simplest, but naive approach, we could use information about the starting line (column `line1`), end line (column `line2`) and function to use (column `fun`) and just paste everything (at the beginning of the line it would be e.g. `"boomer::boom(`" and at the end of line closing bracket - `")"`). However, problems occur if there is a comment after the expression (so we would paste closing bracket to the end of comment, not expression) or in one line is more than one call (separated by semicolon) - the problem in this case will be the same as with the comment after expression. These problems exists, because on the one hand we talk about expressions as a language elements and on the other hand about the text file where the expressions exist (so we treat source code as a *text* in this case).
 
-Additionally to the information about starting and ending line, we know also where exactly is the first character of expression (`col1`) and last character (`col2`). Thus we can imagine the following steps:
+Luckily, additionally to the information about starting and ending line, we know also where exactly is the first character of expression (`col1`) and last character (`col2`). Thus we can imagine the following steps:
 
-- read original script using `readLines()` (some alternative might be `getParseText()`, but this is not 1:1 replacement!)
-- use table returned by `tableboom:::find_exprs()` to get information about starting line, first character, ending line, last character to insert function to the correct location
-- after first modification (first inserted character, e.g. function name with opening bracket), check how the line (which should be modified next) changed - if it was changed indeed one or more times, that means some characters were already added to this line and thus value in `col1` or `col2` must be shifted accordingly
+- read original script using `readLines()` (some alternative might be `getParseText()`)
+- use table returned by `tableboom:::find_exprs()` to get information about starting line, first character, ending line and last character to insert function to the correct location
+- after first modification (first inserted character, e.g. function name with opening bracket), check how the line (the line which should be modified next) changed - if it was changed indeed one or more times, that means some characters were already added to this line and thus value in `col1` or `col2` must be shifted accordingly
 - save the modified script
 
 These steps in the form of function could look like this:
@@ -179,7 +180,7 @@ tableboom:::get_output # just a helper function
 tableboom:::eval_file # main function to eval original and modified script
 ```
 
-To capture the output, `capture.output` is used and then modified a little as well (some not important parts of the output are removed). All of this gives us access to the original source code and the output from modified source code which we can now combine as we want, e.g. in the form of table, where one row contains original code (expression) and the second row contains output from inspected function for the same expression.
+To capture the output, `capture.output` is used and then modified a little as well (some not important parts of the output are removed using other functions in `{tableboom}`). All of this gives us access to the original source code and the output from modified source code which we can now combine as we want, e.g. in the form of table, where one row contains original code (expression) and the second row contains output from inspected function for the same expression.
 
 Dealing with the data we don't know upfront is always risky and that's true also when the code is a data - many things may happen and it is very hard to anticipate everything. Although we have talked about the way to avoid side effects when evaluating expression (using separate environment), in the script we can find many different things for which using new environment won't be enough (e.g. `<<-` or `library()` call):
 
@@ -191,7 +192,7 @@ detach(package:tableboom)
 "package:tableboom" %in% search()
 ```
 
-Although we have used new environment, search path has been affected. The safest way to evaluate expression would be to do it in separate R session - we can do this using `{callr}` package^[Csárdi G, Chang W (2022). _callr: Call R from R_. R package version 3.7.2, <https://CRAN.R-project.org/package=callr>.].
+We have used new environment, but search path has been affected. The safest way to evaluate expression would be to do it in separate R session - and we can do this using `{callr}` package^[Csárdi G, Chang W (2022). _callr: Call R from R_. R package version 3.7.2, <https://CRAN.R-project.org/package=callr>.].
 
 ```{r eval_library_callr, class.source = "fold-show"}
 "package:tableboom" %in% search()
@@ -219,4 +220,4 @@ callr::r(function() {
 
 ## Summary
 
-
+Our path led us from the difference between *text* (words) and *source code* (expression) - we have used both modes of script (`readLines()`, `parse()`, `getParseData()`) to load code as a data, through script modification (in this second step we had stick to the string manipulation, but `language` or `expression` can also be manipulated, however it is tricky to keep `srcref` attribute after manipulation), and to the code evaluation (`eval()`). It was a short road - many things has been left on margin, mostly because of lack of my knowledge. I think, however, that the signs we saw (*Advanced R*, `quote()`, `language` type, environments) will be a good starting point for the future search if needed.
