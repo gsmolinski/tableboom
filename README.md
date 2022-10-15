@@ -31,6 +31,11 @@ about this outside of the IDE.
 This package is intended to be a submission for **RStudio Table Contest
 2022**.
 
+With this package, vignette `Treating Code As Data - Notes` was prepared
+as some kind of tutorial about metaprogramming (in the part it was used
+in `{tableboom}`), which is available also online: [Treating Code As
+Data - Notes](http://rpubs.com/grzegorzsmolinski/956611).
+
 ## Installation
 
 You can install the development version of `{tableboom}` from
@@ -39,6 +44,9 @@ You can install the development version of `{tableboom}` from
 ``` r
 # install.packages("devtools")
 devtools::install_github("gsmolinski/tableboom")
+
+# or with vignette, but installation time will be much longer
+devtools::install_github("gsmolinski/tableboom", build_vignettes = TRUE)
 ```
 
 ## Example
