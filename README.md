@@ -86,4 +86,5 @@ path <- file.path(system.file(package = "tableboom", "table_contest_2022"), "chi
 tableboom::inspect_r(path)
 ```
 
-<img src="inst/figures/README-tableboom.png" alt="HTML table returned by tableboom::inspect_r()" width="1200"/>
+![HTML table returned by
+tableboom::inspect_r()](inst/figures/README-tableboom.png)
