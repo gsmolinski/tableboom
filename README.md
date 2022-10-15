@@ -11,7 +11,7 @@ status](https://www.r-pkg.org/badges/version/tableboom)](https://CRAN.R-project.
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-The goal of `{tableboom}` is to let user choose the R script to inspect
+The aim of `{tableboom}` is to let user choose the R script to inspect
 intermediate results of all calls in the form of HTML table. Three main
 aims are:
 
@@ -86,4 +86,4 @@ path <- file.path(system.file(package = "tableboom", "table_contest_2022"), "chi
 tableboom::inspect_r(path)
 ```
 
-<img src="../../Users/gsmolinski/AppData/Local/Temp/Rtmp8YDXGc/temp_libpath447e4e615f/tableboom/help/figures/README-tableboom.png" width="100%" />
+<img src="../../Users/gsmolinski/AppData/Local/Temp/Rtmp8YDXGc/temp_libpath4424338d/tableboom/help/figures/README-tableboom.png" width="100%" />

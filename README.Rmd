@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-The goal of `{tableboom}` is to let user choose the R script to inspect intermediate results of all calls in the form of HTML table. Three main aims are:
+The aim of `{tableboom}` is to let user choose the R script to inspect intermediate results of all calls in the form of HTML table. Three main aims are:
 
 - give the user possibility to inspect intermediate steps of all calls in the chosen R script, i.e. no need to `boomer::boom()` each call separately;
 - prepare output as an HTML document, so it can be read *outside* of programming process;
