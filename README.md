@@ -11,9 +11,10 @@ status](https://www.r-pkg.org/badges/version/tableboom)](https://CRAN.R-project.
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-The aim of `{tableboom}` is to let user choose the R script to inspect
-intermediate results of all calls in the form of HTML table. Three main
-aims are:
+The goal of `{tableboom}` is to let user choose the R script to inspect
+intermediate results of all calls (using [`{boomer}`
+package](https://github.com/moodymudskipper/boomer)) in the form of HTML
+table. Three main features are:
 
 -   give the user possibility to inspect intermediate steps of all calls
     in the chosen R script, i.e. no need to `boomer::boom()` each call
@@ -28,13 +29,13 @@ result is not satisfactory. However, rather than interactively trying to
 solve the problem, we would like just to *read* it as a book and think
 about this outside of the IDE.
 
+With this software, vignette `Treating Code As Data - Notes` was
+prepared as some kind of tutorial about metaprogramming (in the part it
+is used in `{tableboom}`), which is available also online: [Treating
+Code As Data - Notes](http://rpubs.com/grzegorzsmolinski/956611).
+
 This package is intended to be a submission for **RStudio Table Contest
 2022**.
-
-With this package, vignette `Treating Code As Data - Notes` was prepared
-as some kind of tutorial about metaprogramming (in the part it was used
-in `{tableboom}`), which is available also online: [Treating Code As
-Data - Notes](http://rpubs.com/grzegorzsmolinski/956611).
 
 ## Installation
 
@@ -56,7 +57,7 @@ Having the script as below which we would like to inspect:
     library(dplyr)
 
     path <- file.path(system.file(package = "tableboom","table_contest_2022", "inner_script"),
-                              "eurostat_data.R")
+                      "eurostat_data.R")
 
     source(path) # data - children (< 18) from Ukraine which found temp protection
 
@@ -84,8 +85,8 @@ Having the script as below which we would like to inspect:
 
     path()
 
-The usage of `{tableboom}` is nothing more than calling `inspect_r()`
-with the path to the script (or `NULL` argument and then saved and
+the usage of `{tableboom}` is nothing more than calling `inspect_r()`
+with the path to the script (or `NULL` argument - and then saved and
 opened script in the RStudio editor will be used):
 
 ``` r

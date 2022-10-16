@@ -1,0 +1,96 @@
+---
+title: "Short War Story in the Code Narrative"
+author: "Grzegorz Smoliński"
+format: 
+  html:
+    theme: none
+    self-contained: true
+editor: source
+---
+
+```{css}
+#| label: override_quarto_css
+#| echo: false
+table.gt_table {
+border-top-width: 1px;
+border-bottom-width: 1px;
+border-color: #fccfcf;
+color: #2f4f4f;
+width: 80%;
+font-size: 15px;
+}
+```
+
+
+## Introduction
+
+The table below utilizes [{tableboom}](https://github.com/gsmolinski/tableboom) functionality to tell the story about the war *and* about the code.
+
+There is also a tutorial in the form of vignette about some aspects of metaprogramming used during developing the package: [Treating Code As Data - Notes](http://rpubs.com/grzegorzsmolinski/956611).
+
+## Table
+
+::: {.panel-tabset style="margin: 15px;"}
+## Table
+
+```{r}
+#| label: table
+#| echo: false
+dir_path <- system.file(package = "tableboom", "table_contest_2022")
+
+script_to_inspect <- file.path(dir_path, "children_from_ukr_temp_prot_eu.R")
+
+tableboom::inspect_r(script_to_inspect)
+```
+
+## Code
+
+```{r}
+#| label: code
+#| eval: false
+# install.packages("devtools")
+# devtools::install_github("gsmolinski/tableboom")
+
+dir_path <- system.file(package = "tableboom", "table_contest_2022")
+
+script_to_inspect <- file.path(dir_path, "children_from_ukr_temp_prot_eu.R")
+
+tableboom::inspect_r(script_to_inspect)
+```
+
+## Script
+
+```{.r}
+library(dplyr)
+
+path <- file.path(system.file(package = "tableboom","table_contest_2022", "inner_script"),
+                  "eurostat_data.R")
+
+source(path) # data - children (< 18) from Ukraine which found temp protection
+
+names(child_ukr_prot) <- c("country", "march_2022", "april_2022",
+                           "may_2022","june_2022", "july_2022", "august_2022")
+
+child_ukr_prot[5, "country"] <- stringi::stri_replace_all_regex(child_ukr_prot[5, "country"],
+                                                                "\\s+.+", "")
+
+child_ukr_prot <- child_ukr_prot |>
+  mutate(across(matches("\\d$"), \(e) if_else(e == ":", NA_character_, e)),
+         across(matches("\\d$"), as.integer))
+
+maxs <- vector("integer", ncol(child_ukr_prot) - 1)
+
+for (i in 2:(ncol(child_ukr_prot))) {
+  maxs[[i - 1]] <- max(child_ukr_prot[[i]], na.rm = TRUE)
+}
+
+maxs
+
+total_months <- colSums(child_ukr_prot[, 2:ncol(child_ukr_prot)], na.rm = TRUE)
+
+format(sum(total_months), big.mark = " ")
+
+path()
+
+```
+:::

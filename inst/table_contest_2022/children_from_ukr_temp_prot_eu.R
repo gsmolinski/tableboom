@@ -1,7 +1,7 @@
 library(dplyr)
 
 path <- file.path(system.file(package = "tableboom","table_contest_2022", "inner_script"),
-                          "eurostat_data.R")
+                  "eurostat_data.R")
 
 source(path) # data - children (< 18) from Ukraine which found temp protection
 
