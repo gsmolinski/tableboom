@@ -13,12 +13,16 @@ create_table <- function(script_path, prepared_data) {
     gt() |>
     tab_header("", subtitle = html(glue::glue("<em>{basename(script_path)}</em>"))) |>
     tab_source_note(html(glue::glue("<div class = 'source_note'>{basename(script_path)}</div>"))) |>
-    text_transform(cells_body(),
-                   fn = \(e) lapply(e, \(x) stringi::stri_replace_all_fixed(x, "\n", "<br/>"))) |>
+    text_transform(cells_body(.data$code, which(.data$line == "")),
+                   fn = \(e) lapply(e, \(x) remove_space(x))) |>
     text_transform(cells_body(.data$line, which(.data$line != "")),
-                   fn = \(e) lapply(e, \(x) glue::glue("<div class = 'line'>{x}</div>"))) |>
+                   fn = \(e) lapply(e, \(x) stylize_lines(x))) |>
     text_transform(cells_body(.data$code, which(.data$line != "")),
                    fn = \(e) lapply(e, \(x) highlight_syntax(x))) |>
+    text_transform(cells_body(.data$code, which(.data$line == "")),
+                   fn = \(e) lapply(e, \(x) highlight_output(x))) |>
+    text_transform(cells_body(),
+                   fn = \(e) lapply(e, \(x) stringi::stri_replace_all_fixed(x, "\n", "<br/>"))) |>
     text_transform(cells_body(.data$code, which(.data$line == "")),
                    fn = \(e) lapply(e, \(x) clean_output(x, "<br/>"))) |>
     text_transform(cells_body(.data$code, which(.data$line == "")),
@@ -69,6 +73,40 @@ transform_data <- function(prepared_data) {
   transformed_data
 }
 
+#' Remove Right Space From Output
+#'
+#' @param output output from insect function.
+#'
+#' @return
+#' Character vector with removed right space
+#' @details
+#' We need this for "highlight_output" function:
+#' we want to target only the echo. This is especially
+#' needed for <environment...> in the output.
+#' @noRd
+remove_space <- function(output) {
+  output |>
+    stringi::stri_split_lines() |>
+    unlist(use.names = FALSE) |>
+    stringi::stri_trim_right() |>
+    paste0(collapse = "\n")
+}
+
+#' Insert 'div' Tag Between Lines In the Same Block
+#'
+#' @param lines vector length 1 from line column
+#'
+#' @return
+#' Character with HTML tags added.
+#' @noRd
+stylize_lines <- function(lines) {
+  lines <- unlist(stringi::stri_split_lines(lines), use.names = FALSE)
+  lines <- glue::glue("<div class = 'each_line'>{lines}</div>")
+  lines <- paste0(lines, collapse = "\n")
+  lines <- glue::glue("<div class = 'line_whole'>{lines}</div>")
+  lines
+}
+
 #' Add HTML 'span' Tag To Highlight Syntax
 #'
 #' @param code source code to apply syntax highlighting on.
@@ -95,6 +133,34 @@ highlight_syntax <- function(code) {
     stringi::stri_replace_all_fixed("[", "<span class = 'select_code'>[</span>") |>
     stringi::stri_replace_all_fixed("]", "<span class = 'select_code'>]</span>") |>
     stringi::stri_replace_all_fixed("$", "<span class = 'select_code'>$</span>")
+}
+
+#' Add HTML 'span' Tag To Highlight Syntax
+#'
+#' @param output output from inspect fun to apply syntax highlighting on.
+#'
+#' @return
+#' Character vector with 'span' tags added with classes.
+#' @details
+#' We add tags only to the output which returns echo of
+#' source code, not the result.
+#' @noRd
+highlight_output <- function(output) {
+  output <- output |>
+    stringi::stri_split_fixed("\n") |>
+    unlist(use.names = FALSE)
+
+  inspected <- which(stringi::stri_detect_regex(output, "&lt; |&gt; "))
+
+  if (length(inspected) > 0) {
+    output[inspected] <- output[inspected] |>
+      stringi::stri_replace_all_regex("(\\.*[\\w.]+|`.+`)(?=\\()", "<span class = 'fun_call_output'>$1</span>") |>
+      stringi::stri_replace_all_regex("(\\w+:{3}|\\w+:{2})", "<span class = 'namespace_output'>$1</span>") |>
+      stringi::stri_replace_all_fixed("(", "<span class = 'bracket_output'>(</span>") |>
+      stringi::stri_replace_all_fixed(")", "<span class = 'bracket_output'>)</span>")
+  }
+  output <- paste0(output, collapse = "<br/>")
+  output
 }
 
 #' Remove Dots From The Beginning Of Output

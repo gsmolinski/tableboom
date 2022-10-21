@@ -39,7 +39,7 @@
 }
 
  .number_code {
-  color: #8f5902;
+  color: #976b8d;
 }
 
  .specials_code {
@@ -59,7 +59,29 @@
   color: #fc0fc0;
 }
 
-.line {
+.fun_call_output {
+ color: #a77e15;
+}
+
+.namespace_output {
+  color: #a77e15;
+}
+
+.bracket_output {
+  color: #a77e15;
+}
+
+.each_line {
+  padding: 0;
+  margin: 0;
+  border-bottom: 1px solid white;
+}
+
+.each_line + br {
+  display: none;
+}
+
+.line_whole {
   background-color: #4a7c7c;
   color: #fccfcf;
 }
