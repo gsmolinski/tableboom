@@ -141,26 +141,13 @@ highlight_syntax <- function(code) {
 #'
 #' @return
 #' Character vector with 'span' tags added with classes.
-#' @details
-#' We add tags only to the output which returns echo of
-#' source code, not the result.
 #' @noRd
 highlight_output <- function(output) {
-  output <- output |>
-    stringi::stri_split_fixed("\n") |>
-    unlist(use.names = FALSE)
-
-  inspected <- which(stringi::stri_detect_regex(output, "&lt; |&gt; "))
-
-  if (length(inspected) > 0) {
-    output[inspected] <- output[inspected] |>
-      stringi::stri_replace_all_regex("(\\.*[\\w.]+|`.+`)(?=\\()", "<span class = 'fun_call_output'>$1</span>") |>
-      stringi::stri_replace_all_regex("(\\w+:{3}|\\w+:{2})", "<span class = 'namespace_output'>$1</span>") |>
-      stringi::stri_replace_all_fixed("(", "<span class = 'bracket_output'>(</span>") |>
-      stringi::stri_replace_all_fixed(")", "<span class = 'bracket_output'>)</span>")
-  }
-  output <- paste0(output, collapse = "<br/>")
-  output
+  output |>
+    stringi::stri_replace_all_regex("(\\.*[\\w.]+|`.+`)(?=\\()", "<span class = 'fun_call_output'>$1</span>") |>
+    stringi::stri_replace_all_regex("(\\w+:{3}|\\w+:{2})", "<span class = 'namespace_output'>$1</span>") |>
+    stringi::stri_replace_all_fixed("(", "<span class = 'bracket_output'>(</span>") |>
+    stringi::stri_replace_all_fixed(")", "<span class = 'bracket_output'>)</span>")
 }
 
 #' Remove Dots From The Beginning Of Output
