@@ -13,22 +13,22 @@ create_table <- function(script_path, prepared_data) {
     gt() |>
     tab_header("", subtitle = html(glue::glue("<em>{basename(script_path)}</em>"))) |>
     tab_source_note(html(glue::glue("<div class = 'source_note'>{basename(script_path)}</div>"))) |>
-    text_transform(cells_body(.data$code, which(.data$line == "")),
+    text_transform(cells_body("code", which(.data$line == "")),
                    fn = \(e) lapply(e, \(x) remove_space(x))) |>
-    text_transform(cells_body(.data$line, which(.data$line != "")),
+    text_transform(cells_body("line", which(.data$line != "")),
                    fn = \(e) lapply(e, \(x) stylize_lines(x))) |>
-    text_transform(cells_body(.data$code, which(.data$line != "")),
+    text_transform(cells_body("code", which(.data$line != "")),
                    fn = \(e) lapply(e, \(x) highlight_syntax(x))) |>
-    text_transform(cells_body(.data$code, which(.data$line == "")),
+    text_transform(cells_body("code", which(.data$line == "")),
                    fn = \(e) lapply(e, \(x) highlight_output(x))) |>
     text_transform(cells_body(),
                    fn = \(e) lapply(e, \(x) stringi::stri_replace_all_fixed(x, "\n", "<br/>"))) |>
-    text_transform(cells_body(.data$code, which(.data$line == "")),
+    text_transform(cells_body("code", which(.data$line == "")),
                    fn = \(e) lapply(e, \(x) clean_output(x, "<br/>"))) |>
-    text_transform(cells_body(.data$code, which(.data$line == "")),
+    text_transform(cells_body("code", which(.data$line == "")),
                    fn = \(e) lapply(e, \(x) insert_div(x, "<br/>"))) |>
     opt_align_table_header("right") |>
-    cols_align("center", .data$line) |>
+    cols_align("center", "line") |>
     opt_table_font(google_font("Fira Code")) |>
     opt_table_lines("none") |>
     opt_table_outline(color = "#fccfcf", width = "1px") |>
@@ -55,20 +55,20 @@ create_table <- function(script_path, prepared_data) {
 transform_data <- function(prepared_data) {
   prepared_data_src_code <- prepared_data |>
     dplyr::mutate(order = seq.int(1, nrow(prepared_data) * 2, 2)) |>
-    dplyr::rename(code = .data$src_code) |>
-    dplyr::select(.data$order, .data$line, .data$code)
+    dplyr::rename(code = "src_code") |>
+    dplyr::select("order", "line", "code")
 
   prepared_data_inspected <- prepared_data |>
     dplyr::mutate(line = "",
                   order = seq.int(2, nrow(prepared_data) * 2, 2)) |>
-    dplyr::rename(code = .data$inspected_src_code) |>
-    dplyr::select(.data$order, .data$line, .data$code)
+    dplyr::rename(code = "inspected_src_code") |>
+    dplyr::select("order", "line", "code")
 
   transformed_data <- dplyr::bind_rows(prepared_data_src_code, prepared_data_inspected)
 
   transformed_data <- transformed_data |>
     dplyr::arrange(.data$order) |>
-    dplyr::select(.data$line, .data$code)
+    dplyr::select("line", "code")
 
   transformed_data
 }
@@ -208,7 +208,7 @@ insert_div <- function(code_output, split_sign) {
     stringi::stri_split_fixed(split_sign) |>
     unlist(use.names = FALSE)
 
-  code_output <- ifelse(stringi::stri_detect_regex(code_output, "^\\s*&lt;\\s*&gt;|^\\s*&gt;"),
+  code_output <- ifelse(stringi::stri_detect_regex(code_output, "^\\s*&lt;|^\\s*&lt;\\s*&gt;|^\\s*&gt;"),
                         paste0("<div class = 'output_segment'>", code_output, "</div>"),
                         code_output)
 
