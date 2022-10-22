@@ -59,6 +59,14 @@
   color: #fc0fc0;
 }
 
+.string_output {
+  font-style: italic;
+}
+
+.quote_output {
+  color: #a77e15;
+}
+
 .fun_call_output {
  color: #a77e15;
 }
@@ -69,6 +77,11 @@
 
 .bracket_output {
   color: #a77e15;
+}
+
+.dots_output {
+  color: #a77e15;
+  font-style: italic;
 }
 
 .each_line {
