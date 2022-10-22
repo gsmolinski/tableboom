@@ -7,10 +7,11 @@ test_that("'capture_output' returns list with correct result and do not change s
   search_path <- search()
   parsed_mod_file <- parse(temp_path)
   parsed_orig_file <- parse(script_path)
-  expected <- list("<  >  library(dplyr) ", "<  >  system.file(package = \"tableboom\", \"example_script\") \n chr \"C:/!G/tableboom/inst/example_script\"",
-                   "<  source(paste0(dir, \"/example_script_sourced_inside.R\")) \n. <  >  paste0(dir, \"/example_script_sourced_inside.R\") \n.  chr \"C:/!G/tableboom/inst/example_script/example_script_sourced_inside.R\"\n. \n>  source(paste0(dir, \"/example_script_sourced_inside.R\")) ",
-                   "", "", "", "<  assign(\"my_fun5\", function(x) x + 2) \n. <  function(x) x + 2 \n. >  function(x) x + 2 \n. function (x)  \n.  - attr(*, \"srcref\")= 'srcref' int [1:8] 19 32 19 48 32 48 19 19\n.   ..- attr(*, \"srcfile\")=Classes 'srcfilecopy', 'srcfile' <environment: 0x000001d8c0500990> \n. \n>  assign(\"my_fun5\", function(x) x + 2) ",
-                   "<  >  1:3 \n int [1:3] 1 2 3", "<  >  my_df[\"x\"] \nRows: 1\nColumns: 1\n$ x <dbl> 1",
+  expected <- list("<  >  library(dplyr) ", "<  >  system.file(package = \"tableboom\", \"example_script\") \n chr \"C:/Users/gsmolinski/Documents/R/R-4.2.1/library/tableboom/example_script\"",
+                   "<  source(paste0(dir, \"/example_script_sourced_inside.R\")) \n. <  >  paste0(dir, \"/example_script_sourced_inside.R\") \n.  chr \"C:/Users/gsmolinski/Documents/R/R-4.2.1/library/tableboom/example_script/example_script_sourced_inside.R\"\n. \n>  source(paste0(dir, \"/example_script_sourced_inside.R\")) ",
+                   "", "", "", "<  assign(\"my_fun5\", function(x) x + 2) \n. <  function(x) x + 2 \n. >  function(x) x + 2 \n. function (x)  \n.  - attr(*, \"srcref\")= 'srcref' int [1:8] 19 32 19 48 32 48 19 19\n.   ..- attr(*, \"srcfile\")=Classes 'srcfilecopy', 'srcfile' <environment: 0x000002365ff4fd28> \n. \n>  assign(\"my_fun5\", function(x) x + 2) ",
+                   "<  >  1:3 \n int [1:3] 1 2 3\n\n1<  >  cat(i) \n2<  >  cat(i) \n3<  >  cat(i) ",
+                   "<  >  my_df[\"x\"] \nRows: 1\nColumns: 1\n$ x <dbl> 1",
                    "Rows: 1\nColumns: 1\n$ x <dbl> 1", "<  rep(my_df$x + 10, 2) \n. <  my_df$x + 10 \n. . <  >  my_df$x \n. .  num 1\n. . \n. >  my_df$x + 10 \n.  num 11\n. \n>  rep(my_df$x + 10, 2) \n num [1:2] 11 11",
                    "<  my_df %>%... \n. <  select(., y) \n. . <  mutate(., y = mean(my_vec)) \n. . . <  >  mean(my_vec) \n. . .  num 11\n. . . \n. . >  mutate(., y = mean(my_vec)) \n. . Rows: 1\n. . Columns: 2\n. . $ x <dbl> 1\n. . $ y <dbl> 11\n. . \n. >  select(., y) \n. Rows: 1\n. Columns: 1\n. $ y <dbl> 11\n. \n>  my_df %>%\n     mutate(y = mean(my_vec)) %>%\n     select(y) \nRows: 1\nColumns: 1\n$ y <dbl> 11",
                    "'data.frame':\t1 obs. of  1 variable:\n $ y: num 11\n<  >  str(my_df) ",
@@ -32,8 +33,8 @@ test_that("'eval_file' successfully returns output for all calls", {
   expect_error(callr::r(function(x) tableboom:::eval_file(x[[1]], x[[2]]), args = list(list(parsed_mod_file, parsed_orig_file))), NA)
 })
 
-test_that("'remove_after_empty' removes everything after first empty string", {
-  expect_identical(remove_after_empty(c("a", "b", "", "c", "", "", "d")), c("a", "b"))
+test_that("'remove_after_empty' removes first empty (and everything after) after last '>' sign", {
+  expect_identical(remove_after_empty(c("a", "b", "> c", "", "> d", "", "", "d")), c("a", "b", "> c", "", "> d"))
   expect_identical(remove_after_empty(c("e", "f")), c("e", "f"))
 })
 

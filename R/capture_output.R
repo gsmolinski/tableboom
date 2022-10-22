@@ -77,9 +77,15 @@ get_output <- function(parsed_file, envir) {
 remove_after_empty <- function(output) {
   empty <- which(output == "")
   if (length(empty) > 0) {
-    first_empty <- empty[[1]]
-    before_first_empty <- first_empty - 1
-    output <- output[1:before_first_empty]
+    relevant_output <- which(stringi::stri_detect_fixed(output, ">"))
+    if (length(relevant_output) > 0) {
+      empty <- empty[empty > max(relevant_output)]
+      if (length(empty) > 0) {
+        empty <- min(empty)
+        before_first <- empty[[1]] - 1
+        output <- output[1:before_first]
+      }
+    }
   }
   output
 }
