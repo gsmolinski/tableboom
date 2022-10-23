@@ -1,4 +1,4 @@
-#' Inspect Intermediate Steps of Calls in R Script
+#' Inspect Intermediate Steps of All Calls in R Script
 #'
 #' All calls are inspected in the chosen R script, i.e. output of intermediate
 #' steps is displayed as a HTML table which can be optionally saved as `html` file.
@@ -6,16 +6,24 @@
 #' @param path_to_inspect path to R script which should be inspected. If `NULL` (default)
 #' active file in RStudio will be used. If not `NULL`, `.R` file extension must be used.
 #' @param path_to_save where to save HTML table? If `NULL` (default) table is not saved
-#' and only displayed in the Viewer. If not `NULL`, `.html` file extension must be used.
+#' and only displayed in the Viewer panel. If not `NULL`, `.html` file extension must be used.
 #'
 #' @return
 #' HTML table and - optionally - HTML table saved as a side effect.
 #' @details
-#' Calls are inspected using [boomer::boom] or [dplyr::glimpse].
+#' Calls are inspected using [boomer::boom] or [dplyr::glimpse]. Please note
+#' that comments in separate lines (i.e. in the line is no source code, only comment)
+#' are not included in the output.
 #' @export
 #' @import gt
 #' @examples
-#' inspect_r(file.path(system.file(package = "tableboom", "table_contest_2022"), "script_to_inspect.R"))
+#' inspect_r(file.path(system.file(package = "tableboom", "table_contest_2022"),
+#'                     "children_from_ukr_temp_prot_eu.R"))
+#'
+#' # To see original script, use:
+#' # cat(paste0(readLines(file.path(system.file(package = "tableboom", "table_contest_2022"),
+#' #                                "children_from_ukr_temp_prot_eu.R")),
+#' #            collapse = "\n"))
 inspect_r <- function(path_to_inspect = NULL, path_to_save = NULL) {
   check_args(path_to_inspect, path_to_save)
   if (is.null(path_to_inspect)) {

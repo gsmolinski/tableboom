@@ -151,7 +151,7 @@ highlight_output <- function(output) {
     stringi::stri_replace_all_fixed("(", "<span class = 'bracket_output'>(</span>") |>
     stringi::stri_replace_all_fixed(")", "<span class = 'bracket_output'>)</span>") |>
     stringi::stri_replace_all_fixed("...", "<span class = 'dots_output'>...</span>") |>
-    stringi::stri_replace_all_fixed("…", "<span class = 'dots_output'>…</span>")
+    stringi::stri_replace_all_fixed("\u2026", "<span class = 'dots_output'>\u2026</span>")
 }
 
 #' Remove Dots From The Beginning Of Output

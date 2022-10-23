@@ -59,8 +59,13 @@
   color: #fc0fc0;
 }
 
-.string_output {
+.string_output,
+.string_output .bracket_output,
+.string_output .fun_call_output,
+.string_output .namespace_output,
+.string_output .dots_output {
   font-style: italic;
+  color: #2f4f4f;
 }
 
 .quote_output {

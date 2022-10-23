@@ -2,7 +2,7 @@
 % Please edit documentation in R/inspect_r.R
 \name{inspect_r}
 \alias{inspect_r}
-\title{Inspect Intermediate Steps of Calls in R Script}
+\title{Inspect Intermediate Steps of All Calls in R Script}
 \usage{
 inspect_r(path_to_inspect = NULL, path_to_save = NULL)
 }
@@ -11,18 +11,26 @@ inspect_r(path_to_inspect = NULL, path_to_save = NULL)
 active file in RStudio will be used. If not \code{NULL}, \code{.R} file extension must be used.}
 
 \item{path_to_save}{where to save HTML table? If \code{NULL} (default) table is not saved
-and only displayed in the Viewer. If not \code{NULL}, \code{.html} file extension must be used.}
+and only displayed in the Viewer panel. If not \code{NULL}, \code{.html} file extension must be used.}
 }
 \value{
 HTML table and - optionally - HTML table saved as a side effect.
 }
 \description{
 All calls are inspected in the chosen R script, i.e. output of intermediate
-steps is displayed as a HTML table which can be optionally saved as \code{.html} file.
+steps is displayed as a HTML table which can be optionally saved as \code{html} file.
 }
 \details{
-Calls are inspected using \link[boomer:boom]{boomer::boom} or \link[dplyr:glimpse]{dplyr::glimpse}.
+Calls are inspected using \link[boomer:boom]{boomer::boom} or \link[dplyr:glimpse]{dplyr::glimpse}. Please note
+that comments in separate lines (i.e. in the line is no source code, only comment)
+are not included in the output.
 }
 \examples{
-inspect_r(file.path(system.file(package = "tableboom", "table_contest_2022"), "script_to_inspect.R"))
+inspect_r(file.path(system.file(package = "tableboom", "table_contest_2022"),
+                    "children_from_ukr_temp_prot_eu.R"))
+
+# To see original script, use:
+# cat(paste0(readLines(file.path(system.file(package = "tableboom", "table_contest_2022"),
+#                                "children_from_ukr_temp_prot_eu.R")),
+#            collapse = "\n"))
 }
