@@ -1,164 +1,164 @@
- #tableboom .gt_table {
+ .gt_table {
    white-space: pre-wrap;
  }
 
- #tableboom .source_note {
+ .source_note {
    font-style: italic;
    text-align: right;
  }
 
- #tableboom .string_code,
- #tableboom .string_code .comment_code,
- #tableboom .string_code .bracket_code,
- #tableboom .string_code .select_code,
- #tableboom .string_code .keyword_code,
- #tableboom .string_code .specials_code,
- #tableboom .string_code .namespace_code,
- #tableboom .string_code .fun_call_code,
- #tableboom .string_code .brace_code,
- #tableboom .string_code .number_code {
+ .string_code,
+ .string_code .comment_code,
+ .string_code .bracket_code,
+ .string_code .select_code,
+ .string_code .keyword_code,
+ .string_code .specials_code,
+ .string_code .namespace_code,
+ .string_code .fun_call_code,
+ .string_code .brace_code,
+ .string_code .number_code {
   color: #4e9a06;
   background-color: inherit;
 }
 
- #tableboom .comment_code {
+ .comment_code {
   color: white;
   background-color: #6f7850;
 }
 
- #tableboom .bracket_code {
+ .bracket_code {
   color: #FF6600;
 }
 
- #tableboom .select_code {
+ .select_code {
   color: #a2006d;
 }
 
- #tableboom .keyword_code {
+ .keyword_code {
   color: #0099FF;
 }
 
- #tableboom .number_code {
+ .number_code {
   color: #976b8d;
 }
 
- #tableboom .specials_code {
+ .specials_code {
   color: #CF4F5F;
 }
 
- #tableboom .namespace_code {
+ .namespace_code {
   color: #b88a00;
 }
 
- #tableboom .fun_call_code,
- #tableboom .fun_call_code .keyword_code {
+ .fun_call_code,
+ .fun_call_code .keyword_code {
   color: #6464dd;
 }
 
- #tableboom .brace_code {
+ .brace_code {
   color: #fc0fc0;
 }
 
-#tableboom .string_output,
-#tableboom .string_output .bracket_output,
-#tableboom .string_output .fun_call_output,
-#tableboom .string_output .namespace_output,
-#tableboom .string_output .dots_output,
-#tableboom .string_output .context_output {
+.string_output,
+.string_output .bracket_output,
+.string_output .fun_call_output,
+.string_output .namespace_output,
+.string_output .dots_output,
+.string_output .context_output {
   color: #2f4f4f;
 }
 
-#tableboom .quote_output {
+.quote_output {
   color: #a77e15;
 }
 
-#tableboom .fun_call_output {
+.fun_call_output {
  color: #a77e15;
 }
 
-#tableboom .namespace_output {
+.namespace_output {
   color: #a77e15;
 }
 
-#tableboom .specials_output {
+.specials_output {
   font-style: italic;
 }
 
-#tableboom .bracket_output {
+.bracket_output {
   color: #a77e15;
 }
 
-#tableboom .dots_output {
+.dots_output {
   color: #a77e15;
   font-style: italic;
 }
 
-#tableboom .context_output {
+.context_output {
   color: #a77e15;
 }
 
-#tableboom .each_line {
+.each_line {
   padding: 0;
   margin: 0;
   border-bottom: 1px solid white;
 }
 
-#tableboom .each_line + br {
+.each_line + br {
   display: none;
 }
 
-#tableboom .line_whole {
+.line_whole {
   background-color: #4a7c7c;
   color: #fccfcf;
 }
 
-#tableboom .output_whole {
+.output_whole {
   margin-left: 3%;
   background-color: #fdf0e3;
 }
 
-#tableboom .output_segment {
+.output_segment {
   padding: 0;
   margin: 0;
   border-top: 2px solid white;
 }
 
-#tableboom .output_segment + br {
+.output_segment + br {
   display: none;
 }
 
-#tableboom .fun_output {
+.fun_output {
   border-left: 6px groove #b1b1ee;
 }
 
-#tableboom .error_output {
+.error_output {
  border-left: 6px groove #ff9999;
 }
 
-#tableboom .attr_output {
+.attr_output {
  border-left: 6px groove gold;
 }
 
-#tableboom .int_output {
+.int_output {
  border-left: 6px groove #e5b7ee;
 }
 
-#tableboom .dbl_output {
+.dbl_output {
  border-left: 6px groove #d2bc99;
 }
 
-#tableboom .num_output {
+.num_output {
   border-left: 6px groove #d2bc99;
 }
 
-#tableboom .chr_output {
+.chr_output {
   border-left: 6px groove #b8d69b;
 }
 
-#tableboom .logi_output {
+.logi_output {
   border-left: 6px groove #BDE4FF;
 }
 
-#tableboom .cplx_output {
+.cplx_output {
   border-left: 6px groove #CCFFFF;
 }

@@ -4,7 +4,7 @@
 \alias{inspect_r}
 \title{Inspect Intermediate Steps of All Calls in R Script}
 \usage{
-inspect_r(path_to_inspect = NULL, path_to_save = NULL)
+inspect_r(path_to_inspect = NULL, path_to_save = NULL, id = NULL)
 }
 \arguments{
 \item{path_to_inspect}{path to R script which should be inspected. If \code{NULL} (default)
@@ -12,6 +12,9 @@ active file in RStudio will be used. If not \code{NULL}, \code{.R} file extensio
 
 \item{path_to_save}{where to save HTML table? If \code{NULL} (default) table is not saved
 and only displayed in the Viewer panel. If not \code{NULL}, \code{.html} file extension must be used.}
+
+\item{id}{table id passed to \code{\link[gt:gt]{gt::gt()}}. If \code{NULL} (default), random id is assigned; otherwise
+character vector length 1 must be provided.}
 }
 \value{
 HTML table and - optionally - HTML table saved as a side effect.

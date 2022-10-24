@@ -2,15 +2,16 @@
 #'
 #' @param script_path path to original script, will be used as table title / header.
 #' @param prepared_data data returned by `prepare_data()`.
+#' @param id from `inspect_r`: id passed by user.
 #'
 #' @return
 #' Table object.
 #' @import gt
 #' @noRd
-create_table <- function(script_path, prepared_data) {
+create_table <- function(script_path, prepared_data, id) {
   prepared_data |>
     transform_data() |>
-    gt(id = "tableboom") |>
+    gt(id = id) |>
     tab_header("", subtitle = html(glue::glue("<em>{basename(script_path)}</em>"))) |>
     tab_source_note(html(glue::glue("<div class = 'source_note'>{basename(script_path)}</div>"))) |>
     text_transform(cells_body("code", which(.data$line == "")),

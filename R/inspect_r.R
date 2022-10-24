@@ -7,6 +7,8 @@
 #' active file in RStudio will be used. If not `NULL`, `.R` file extension must be used.
 #' @param path_to_save where to save HTML table? If `NULL` (default) table is not saved
 #' and only displayed in the Viewer panel. If not `NULL`, `.html` file extension must be used.
+#' @param id table id passed to [gt::gt()]. If `NULL` (default), random id is assigned; otherwise
+#' character vector length 1 must be provided.
 #'
 #' @return
 #' HTML table and - optionally - HTML table saved as a side effect.
@@ -24,8 +26,8 @@
 #' # cat(paste0(readLines(file.path(system.file(package = "tableboom", "table_contest_2022"),
 #' #                                "children_from_ukr_temp_prot_eu.R")),
 #' #            collapse = "\n"))
-inspect_r <- function(path_to_inspect = NULL, path_to_save = NULL) {
-  check_args(path_to_inspect, path_to_save)
+inspect_r <- function(path_to_inspect = NULL, path_to_save = NULL, id = NULL) {
+  check_args(path_to_inspect, path_to_save, id)
   if (is.null(path_to_inspect)) {
     path_to_inspect <- get_active_file()
   } else {
@@ -33,7 +35,7 @@ inspect_r <- function(path_to_inspect = NULL, path_to_save = NULL) {
   }
 
   prepared_data <- prepare_data(path_to_inspect)
-  table <- create_table(path_to_inspect, prepared_data)
+  table <- create_table(path_to_inspect, prepared_data, id)
 
   if (!is.null(path_to_save)) {
     gtsave(table, filename = basename(path_to_save), path = dirname(path_to_save))
@@ -50,7 +52,7 @@ inspect_r <- function(path_to_inspect = NULL, path_to_save = NULL) {
 #' @return
 #' NULL or error.
 #' @noRd
-check_args <- function(path_to_inspect, path_to_save) {
+check_args <- function(path_to_inspect, path_to_save, id) {
   if (!is.null(path_to_inspect)) {
     if (length(path_to_inspect) > 1 || is.na(path_to_inspect) || !is.character(path_to_inspect)) {
       stop("Argument passed to 'path_to_inspect' must be character length 1 or NULL.", call. = FALSE)
@@ -64,6 +66,12 @@ check_args <- function(path_to_inspect, path_to_save) {
       stop("Argument passed to 'path_to_save' must be character length 1 or NULL.", call. = FALSE)
     } else if (tools::file_ext(path_to_save) != "html") {
       stop("If path is provided as an argument to 'path_to_save', then extension must be 'html'.", call. = FALSE)
+    }
+  }
+
+  if (!is.null(id)) {
+    if (length(id) > 1 || is.na(id) || !is.character(id)) {
+      stop("Argument passed to 'id' must be character length 1 or NULL.", call. = FALSE)
     }
   }
 }
