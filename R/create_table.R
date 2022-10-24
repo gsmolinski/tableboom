@@ -148,6 +148,7 @@ highlight_output <- function(output) {
     stringi::stri_replace_all_regex("['](.*?)[']", "<span class = 'quote_output'>'</span><span class = 'string_output'>$1</span><span class = 'quote_output'>'</span>") |>
     stringi::stri_replace_all_regex("(\\.*[\\w.]+|`.+`)(?=\\()", "<span class = 'fun_call_output'>$1</span>") |>
     stringi::stri_replace_all_regex("(\\w+:{3}|\\w+:{2})", "<span class = 'namespace_output'>$1</span>") |>
+    stringi::stri_replace_all_regex("\\b((?:TRUE|FALSE|T|F|NA|NA_character_|NA_integer_|NA_complex_|NA_real_|NULL))\\b", "<span class = 'specials_output'>$1</span>") |>
     stringi::stri_replace_all_fixed("(", "<span class = 'bracket_output'>(</span>") |>
     stringi::stri_replace_all_fixed(")", "<span class = 'bracket_output'>)</span>") |>
     stringi::stri_replace_all_fixed("...", "<span class = 'dots_output'>...</span>") |>
