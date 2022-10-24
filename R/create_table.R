@@ -180,7 +180,7 @@ clean_output <- function(code_output, split_sign) {
   code_output
 }
 
-#' Insert 'div' Tags
+#' Insert 'div' and 'span' Tags
 #'
 #' @param code_output output from inspect function
 #' (`boomer::boom` or `dplyr::glimpse`) after modifications,
@@ -188,16 +188,20 @@ clean_output <- function(code_output, split_sign) {
 #' @param split_sign character vector to split by.
 #'
 #' @return
-#' Character vector with 'div' tags added and proper class.
+#' Character vector with 'div' or 'span' tags added and proper class.
 #' @details
 #' Divs are necessary to change style. We want to add borders
-#' (different colors depending on output object, e.g. chr, num)
-#' and background color for the whole block of output.
+#' (different colors depending on output object, e.g. chr, num),
+#' background color for the whole block of output, split segment
+#' to add white border and change context, i.e. '<' and '>' signs
+#' returned by `boomer::boom`.
 #' @noRd
 insert_div <- function(code_output, split_sign) {
   code_output <- code_output |>
     stringi::stri_split_fixed(split_sign) |>
     unlist(use.names = FALSE)
+
+  where_context <- which(stringi::stri_detect_regex(code_output, "^\\s*&lt;|^\\s*&lt;\\s*&gt;|^\\s*&gt;"))
 
   code_output <- ifelse(stringi::stri_detect_regex(code_output, "^\\s*&lt;|^\\s*&lt;\\s*&gt;|^\\s*&gt;"),
                         paste0("<div class = 'output_segment'>", code_output, "</div>"),
@@ -214,6 +218,10 @@ insert_div <- function(code_output, split_sign) {
                                   stringi::stri_detect_regex(code_output, "^\\s*cplx|^\\s*\\$.+&lt;cplx&gt;|^\\s*\\$.+:\\scplx\\s|^\\s*Named\\scplx\\s") ~ paste0("<span class = 'cplx_output'>", code_output, "</span>"),
                                   TRUE ~ code_output)
 
+  code_output[where_context] <- code_output[where_context] |>
+    stringi::stri_replace_first_regex("(\\s*)&lt;(\\s*)&gt;", "<span class = 'context_output'>$1\\u2240$2\\u22b3</span>") |>
+    stringi::stri_replace_first_regex("(\\s*)&lt;", "<span class = 'context_output'>$1\\u2240</span>") |>
+    stringi::stri_replace_first_regex("(\\s*)&gt;", "<span class = 'context_output'>$1\\u22b3</span>")
 
   code_output <- paste0(code_output, collapse = split_sign)
   code_output <- paste0("<div class = 'output_whole'>", code_output, "</div>")
