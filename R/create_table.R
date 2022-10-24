@@ -10,7 +10,7 @@
 create_table <- function(script_path, prepared_data) {
   prepared_data |>
     transform_data() |>
-    gt() |>
+    gt(id = "tableboom") |>
     tab_header("", subtitle = html(glue::glue("<em>{basename(script_path)}</em>"))) |>
     tab_source_note(html(glue::glue("<div class = 'source_note'>{basename(script_path)}</div>"))) |>
     text_transform(cells_body("code", which(.data$line == "")),

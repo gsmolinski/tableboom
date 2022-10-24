@@ -4,13 +4,23 @@ author: "Grzegorz Smoliński"
 format: 
   html:
     theme: none
-    self-contained: true
+    embed-resources: true
 editor: source
 ---
 
 ```{css}
 #| label: override_quarto_css
 #| echo: false
+
+.title {
+text-align: center;
+}
+
+.author {
+font-size: 14px;
+text-align: center;
+}
+
 table.gt_table {
 border-top-width: 1px;
 border-bottom-width: 1px;

@@ -1,164 +1,164 @@
- .gt_table {
+ #tableboom .gt_table {
    white-space: pre-wrap;
  }
 
- .source_note {
+ #tableboom .source_note {
    font-style: italic;
    text-align: right;
  }
 
- .string_code,
- .string_code .comment_code,
- .string_code .bracket_code,
- .string_code .select_code,
- .string_code .keyword_code,
- .string_code .specials_code,
- .string_code .namespace_code,
- .string_code .fun_call_code,
- .string_code .brace_code,
- .string_code .number_code {
+ #tableboom .string_code,
+ #tableboom .string_code .comment_code,
+ #tableboom .string_code .bracket_code,
+ #tableboom .string_code .select_code,
+ #tableboom .string_code .keyword_code,
+ #tableboom .string_code .specials_code,
+ #tableboom .string_code .namespace_code,
+ #tableboom .string_code .fun_call_code,
+ #tableboom .string_code .brace_code,
+ #tableboom .string_code .number_code {
   color: #4e9a06;
   background-color: inherit;
 }
 
- .comment_code {
+ #tableboom .comment_code {
   color: white;
   background-color: #6f7850;
 }
 
- .bracket_code {
+ #tableboom .bracket_code {
   color: #FF6600;
 }
 
- .select_code {
+ #tableboom .select_code {
   color: #a2006d;
 }
 
- .keyword_code {
+ #tableboom .keyword_code {
   color: #0099FF;
 }
 
- .number_code {
+ #tableboom .number_code {
   color: #976b8d;
 }
 
- .specials_code {
+ #tableboom .specials_code {
   color: #CF4F5F;
 }
 
- .namespace_code {
+ #tableboom .namespace_code {
   color: #b88a00;
 }
 
- .fun_call_code,
- .fun_call_code .keyword_code {
+ #tableboom .fun_call_code,
+ #tableboom .fun_call_code .keyword_code {
   color: #6464dd;
 }
 
- .brace_code {
+ #tableboom .brace_code {
   color: #fc0fc0;
 }
 
-.string_output,
-.string_output .bracket_output,
-.string_output .fun_call_output,
-.string_output .namespace_output,
-.string_output .dots_output,
-.string_output .context_output {
+#tableboom .string_output,
+#tableboom .string_output .bracket_output,
+#tableboom .string_output .fun_call_output,
+#tableboom .string_output .namespace_output,
+#tableboom .string_output .dots_output,
+#tableboom .string_output .context_output {
   color: #2f4f4f;
 }
 
-.quote_output {
+#tableboom .quote_output {
   color: #a77e15;
 }
 
-.fun_call_output {
+#tableboom .fun_call_output {
  color: #a77e15;
 }
 
-.namespace_output {
+#tableboom .namespace_output {
   color: #a77e15;
 }
 
-.specials_output {
+#tableboom .specials_output {
   font-style: italic;
 }
 
-.bracket_output {
+#tableboom .bracket_output {
   color: #a77e15;
 }
 
-.dots_output {
+#tableboom .dots_output {
   color: #a77e15;
   font-style: italic;
 }
 
-.context_output {
+#tableboom .context_output {
   color: #a77e15;
 }
 
-.each_line {
+#tableboom .each_line {
   padding: 0;
   margin: 0;
   border-bottom: 1px solid white;
 }
 
-.each_line + br {
+#tableboom .each_line + br {
   display: none;
 }
 
-.line_whole {
+#tableboom .line_whole {
   background-color: #4a7c7c;
   color: #fccfcf;
 }
 
-.output_whole {
+#tableboom .output_whole {
   margin-left: 3%;
   background-color: #fdf0e3;
 }
 
-.output_segment {
+#tableboom .output_segment {
   padding: 0;
   margin: 0;
   border-top: 2px solid white;
 }
 
-.output_segment + br {
+#tableboom .output_segment + br {
   display: none;
 }
 
-.fun_output {
+#tableboom .fun_output {
   border-left: 6px groove #b1b1ee;
 }
 
-.error_output {
+#tableboom .error_output {
  border-left: 6px groove #ff9999;
 }
 
-.attr_output {
+#tableboom .attr_output {
  border-left: 6px groove gold;
 }
 
-.int_output {
+#tableboom .int_output {
  border-left: 6px groove #e5b7ee;
 }
 
-.dbl_output {
+#tableboom .dbl_output {
  border-left: 6px groove #d2bc99;
 }
 
-.num_output {
+#tableboom .num_output {
   border-left: 6px groove #d2bc99;
 }
 
-.chr_output {
+#tableboom .chr_output {
   border-left: 6px groove #b8d69b;
 }
 
-.logi_output {
+#tableboom .logi_output {
   border-left: 6px groove #BDE4FF;
 }
 
-.cplx_output {
+#tableboom .cplx_output {
   border-left: 6px groove #CCFFFF;
 }
