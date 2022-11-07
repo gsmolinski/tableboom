@@ -9,6 +9,8 @@
 status](https://www.r-pkg.org/badges/version/tableboom)](https://CRAN.R-project.org/package=tableboom)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![Launch RStudio
+Cloud](https://img.shields.io/badge/launch-cloud-75aadb?style=flat&logo=rstudio)](https://rstudio.cloud/project/4805335)
 <!-- badges: end -->
 
 The goal of `{tableboom}` is to let user choose the R script to inspect
