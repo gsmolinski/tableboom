@@ -21,6 +21,8 @@ knitr::opts_chunk$set(
 [![Launch RStudio Cloud](https://img.shields.io/badge/launch-cloud-75aadb?style=flat&logo=rstudio)](https://rstudio.cloud/project/4903304)
 <!-- badges: end -->
 
+[This package received Honorable Mention in Posit Table Contest 2022.](https://posit.co/blog/winners-of-the-2022-table-contest/)
+
 The goal of `{tableboom}` is to let user choose the R script to inspect intermediate results of all calls (using [`{boomer}`](https://github.com/moodymudskipper/boomer)) in the form of HTML table. Three main features are:
 
 - give the user possibility to inspect intermediate steps of all calls in the chosen R script, i.e. no need to `boomer::boom()` each call separately;

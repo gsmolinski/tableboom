@@ -13,18 +13,21 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 Cloud](https://img.shields.io/badge/launch-cloud-75aadb?style=flat&logo=rstudio)](https://rstudio.cloud/project/4903304)
 <!-- badges: end -->
 
+[This package received Honorable Mention in Posit Table Contest
+2022.](https://posit.co/blog/winners-of-the-2022-table-contest/)
+
 The goal of `{tableboom}` is to let user choose the R script to inspect
 intermediate results of all calls (using
 [`{boomer}`](https://github.com/moodymudskipper/boomer)) in the form of
 HTML table. Three main features are:
 
--   give the user possibility to inspect intermediate steps of all calls
-    in the chosen R script, i.e. no need to `boomer::boom()` each call
-    separately;
--   prepare output as an HTML document, so it can be read *outside* of
-    programming process;
--   prepare HTML document as a table, *but* trying to make it more like
-    a *word story* than table;
+- give the user possibility to inspect intermediate steps of all calls
+  in the chosen R script, i.e. no need to `boomer::boom()` each call
+  separately;
+- prepare output as an HTML document, so it can be read *outside* of
+  programming process;
+- prepare HTML document as a table, *but* trying to make it more like a
+  *word story* than table;
 
 With this software, vignette `Treating Code As Data - Notes` was
 prepared as some kind of tutorial about metaprogramming (in the part it
@@ -92,5 +95,9 @@ path <- file.path(system.file(package = "tableboom", "table_contest_2022"), "chi
 tableboom::inspect_r(path)
 ```
 
-![HTML table returned by
-tableboom::inspect_r()](inst/figures/README-tableboom.png)
+<figure>
+<img src="inst/figures/README-tableboom.png"
+alt="HTML table returned by tableboom::inspect_r()" />
+<figcaption aria-hidden="true">HTML table returned by
+tableboom::inspect_r()</figcaption>
+</figure>
