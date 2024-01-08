@@ -34,9 +34,6 @@ prepared as some kind of tutorial about metaprogramming (in the part it
 is used in `{tableboom}`), which is available also online: [Treating
 Code As Data - Notes](http://rpubs.com/grzegorzsmolinski/956611).
 
-This package is intended to be a submission for **RStudio Table Contest
-2022**.
-
 ## Installation
 
 You can install the development version of `{tableboom}` from
